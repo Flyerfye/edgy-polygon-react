@@ -14,9 +14,7 @@ export function processImage(props: any): any {
 
 // Perform edge detection and polyg calc and render
 function processImageCallback(props: any): any {
-  console.log("OpenCV is now ready");
-  console.log("processImage");
-
+  console.log("OpenCV is now ready, processing image");
   let cvSrc = cv.imread(props.imgElem);
   let cvDst = new cv.Mat();
 
@@ -31,13 +29,10 @@ function processImageCallback(props: any): any {
     false
   );
 
-  // cvDst = generateSpacedMat(cvDst, +props.pointSpacing);
+  cvDst = generateSpacedMat(cvDst, +props.pointSpacing);
 
-  let dstPts = matToPoints(cvDst, +props.sparseness);
-  // pointsDetectedLabel!.innerText = "" + totalPoints;
-  // generateSparseMat(cvDst, +props.sparseness);
-  // cv.imshow("edgeCanvas", generateSparseMat(cvDst, +props.sparseness));
-  cv.imshow("edgeCanvas", cvDst);
+  let dstPts = matToPoints(cvDst, +props.sparseness, props.pointsFn);
+  cv.imshow("edgeCanvas", generateSparseMat(cvDst, +props.sparseness));
   cvSrc?.delete();
   cvDst.delete();
 
@@ -92,7 +87,7 @@ export function generateSparseMat(mat: any, sparseness: any): any {
   //get the dimensions of the Mat object
   var rows = mat.rows;
   var cols = mat.cols;
-  var sparseValue = +sparseness.value;
+  var sparseValue = +sparseness;
   var sparseCount = 1;
 
   for (var x = 0; x < rows; x++) {
@@ -114,7 +109,7 @@ export function generateSparseMat(mat: any, sparseness: any): any {
 }
 
 // Converts the matrix of values returned from edge detection to an array of points
-export function matToPoints(mat: any, sparseness: any): number[][] {
+export function matToPoints(mat: any, sparseness: number, pointsFn:any): number[][] {
   //get the dimensions of the Mat object
   var rows = mat.rows;
   var cols = mat.cols;
@@ -141,6 +136,7 @@ export function matToPoints(mat: any, sparseness: any): number[][] {
   }
 
   console.log("Points:", totalPoints);
+  pointsFn(totalPoints)
 
   return points;
 }
