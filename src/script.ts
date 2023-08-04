@@ -30,10 +30,14 @@ function processImageCallback(props: any): any {
     false
   );
 
-  cvDst = generateSpacedMat(cvDst, +props.pointSpacing);
+  if (+props.pointSpacing > 0)
+    cvDst = generateSpacedMat(cvDst, +props.pointSpacing);
+  if (+props.sparseness > 1)
+    cvDst = generateSparseMat(cvDst, +props.sparseness);
 
-  let dstPts = matToPoints(cvDst, +props.sparseness, props.pointsFn);
-  cv.imshow("edgeCanvas", generateSparseMat(cvDst, +props.sparseness));
+  let dstPts = matToPoints(cvDst, props.pointsFn);
+
+  cv.imshow("edgeCanvas", cvDst);
   cvSrc?.delete();
   cvDst.delete();
 
@@ -89,17 +93,16 @@ export function generateSparseMat(mat: any, sparseness: any): any {
   var rows = mat.rows;
   var cols = mat.cols;
   var sparseValue = +sparseness;
-  var sparseCount = 1;
 
   for (var x = 0; x < rows; x++) {
     for (var y = 0; y < cols; y++) {
       var currentPixel = mat.charAt(x * cols + y);
       if (currentPixel !== 0) {
-        if (sparseValue === sparseCount++) {
-          //when the sparse count is reached, leave the current non-zero pixel as is
-          sparseCount = 1;
-        } else {
-          //if the sparse count hasn't been reached 'erase' the current non-zero pixel
+        Math.floor(Math.random() * sparseness);
+        if (
+          mat.charAt(x * cols + y) !== 0 &&
+          0 < Math.floor(Math.random() * sparseValue)
+        ) {
           mat.data[x * cols + y] = 0;
         }
       }
@@ -110,16 +113,10 @@ export function generateSparseMat(mat: any, sparseness: any): any {
 }
 
 // Converts the matrix of values returned from edge detection to an array of points
-export function matToPoints(
-  mat: any,
-  sparseness: number,
-  pointsFn: any
-): number[][] {
+export function matToPoints(mat: any, pointsFn: any): number[][] {
   //get the dimensions of the Mat object
   var rows = mat.rows;
   var cols = mat.cols;
-  var sparseValue = +sparseness;
-  var sparseCount = 1;
   var totalPoints = 0;
 
   var points: number[][] = [];
@@ -128,13 +125,12 @@ export function matToPoints(
     return points;
   }
 
-  for (var x = 0; x < rows; x++) {
-    for (var y = 0; y < cols; y++) {
-      // Mirada treats the mat like a vector instead of a matrix and so it needs to be accessed like a 1D matrix
-      if (mat.charAt(x * cols + y) !== 0 && sparseValue === sparseCount++) {
-        // console.log("Point (",x,",",y,")");
-        points.push([x, y]);
-        sparseCount = 1;
+  // slightly optimizes the process by not performing a sparse check on every point
+  // Mirada treats the mat like a vector instead of a matrix and so it needs to be accessed like a 1D matrix
+  for (var i = 0; i < rows; i++) {
+    for (var j = 0; j < cols; j++) {
+      if (mat.charAt(i * cols + j) !== 0) {
+        points.push([i, j]);
         totalPoints++;
       }
     }

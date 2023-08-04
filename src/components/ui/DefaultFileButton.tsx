@@ -9,7 +9,7 @@ export default function DefaultFileButton(props: any) {
 
       //generate blob to be parsed by reader.readAsDataURL() later
       var request = new XMLHttpRequest();
-      request.open("GET", "media/Birb.jpg", true);
+      request.open("GET", props.inputFile, true);
       request.responseType = "blob";
 
       request.onload = function () {
