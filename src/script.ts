@@ -15,6 +15,7 @@ export function processImage(props: any): any {
 // Perform edge detection and polyg calc and render
 function processImageCallback(props: any): any {
   console.log("OpenCV is now ready, processing image");
+
   let cvSrc = cv.imread(props.imgElem);
   let cvDst = new cv.Mat();
 
@@ -39,7 +40,7 @@ function processImageCallback(props: any): any {
   RenderPolygonFn({
     points: dstPts,
     borderPoints: +props.borderPoints,
-    smoothColors: +props.smoothColors,
+    colorSampRadius: +props.colorSampRadius,
     showPoints: props.showPoints,
     imgElem: props.imgElem,
     onSuccess: function (canvas: HTMLCanvasElement) {
@@ -109,7 +110,11 @@ export function generateSparseMat(mat: any, sparseness: any): any {
 }
 
 // Converts the matrix of values returned from edge detection to an array of points
-export function matToPoints(mat: any, sparseness: number, pointsFn:any): number[][] {
+export function matToPoints(
+  mat: any,
+  sparseness: number,
+  pointsFn: any
+): number[][] {
   //get the dimensions of the Mat object
   var rows = mat.rows;
   var cols = mat.cols;
@@ -136,7 +141,7 @@ export function matToPoints(mat: any, sparseness: number, pointsFn:any): number[
   }
 
   console.log("Points:", totalPoints);
-  pointsFn(totalPoints)
+  pointsFn(totalPoints);
 
   return points;
 }

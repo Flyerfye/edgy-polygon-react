@@ -9,22 +9,36 @@ import FileInputButton from "../ui/FileInputButton";
 import { processImage } from "../../script";
 import PolyCanvas from "./PolyCanvas";
 import RangeSliderBar from "../ui/RangeSliderBar";
+import Checkbox from "../ui/Checkbox";
+import DefaultFileButton from "../ui/DefaultFileButton";
 
 export default function ApplicationGrid(props: any) {
   const ID_MIN_THRESHOLD = "edge-min-threshold";
   const ID_MAX_THRESHOLD = "edge-max-threshold";
   const ID_POINT_SPACING = "point-spacing";
   const ID_SPARSENESS = "sparseness";
+  const ID_BORDER_POINTS = "border-points";
+  const ID_COLOR_SAMP_RADIUS = "color-sample-radius";
+  const ID_SHOW_TRI_POINTS = "show-triangle-points";
 
+  //source image params
   const [sourceImg, setSourceImg] = useState<HTMLImageElement | null>(null);
 
+  //edge image params
   const [pointsDetected, setPointsDetected] = useState<number | null>(0);
   const [minThreshold, setMinThreshold] = useState<number | null>(80);
   const [maxThreshold, setMaxThreshold] = useState<number | null>(120);
   const [pointSpacing, setPointSpacing] = useState<number | null>(0);
   const [sparseness, setSparseness] = useState<number | null>(1);
 
-  const updateSourceImg = (file: File, imageResult: string) => {
+  //poly image params
+  const [borderPoints, setBorderPoints] = useState<number | null>(0);
+  const [colorSampRadius, setColorSampRadius] = useState<number | null>(0);
+  const [showTrianglePoints, setShowTrianglePoints] = useState<boolean | null>(
+    false
+  );
+
+  const updateSourceImg = (file: File) => {
     //reads and process the source image
     const reader = new FileReader();
     const image = new Image();
@@ -40,9 +54,9 @@ export default function ApplicationGrid(props: any) {
           edgeMaxThreshold: maxThreshold,
           pointSpacing: pointSpacing,
           sparseness: sparseness,
-          borderPoints: "1",
-          smoothColors: "0",
-          showPoints: false,
+          borderPoints: borderPoints,
+          smoothColors: colorSampRadius,
+          showPoints: showTrianglePoints,
           pointsFn: setPointsDetected,
         });
       };
@@ -54,32 +68,50 @@ export default function ApplicationGrid(props: any) {
     reader.readAsDataURL(file);
   };
 
-  const reprocessImage = (paramName:string, paramValue:number
-  ) => {
+  const reprocessImage = (paramName: string, paramValue: number | boolean) => {
+    // since state updates async, it is quicker to make the call to process image
+    // using the updated param value directly
     let tempMinThreshold = minThreshold;
     let tempMaxThreshold = maxThreshold;
     let tempPointSpacing = pointSpacing;
     let tempSparseness = sparseness;
-    switch(paramName) {
+    let tempBorderPoints = borderPoints;
+    let tempColorSampRadius = colorSampRadius;
+    let tempShowTrianglePoints = showTrianglePoints;
+    switch (paramName) {
       case ID_MIN_THRESHOLD: {
-        tempMinThreshold = paramValue;
-        setMinThreshold(paramValue);
+        tempMinThreshold = paramValue as number;
+        setMinThreshold(tempMinThreshold);
         break;
       }
       case ID_MAX_THRESHOLD: {
-        tempMaxThreshold = paramValue;
-        setMaxThreshold(paramValue);
+        tempMaxThreshold = paramValue as number;
+        setMaxThreshold(tempMaxThreshold);
         break;
       }
       case ID_POINT_SPACING: {
-        tempPointSpacing = paramValue;
-        setPointSpacing(paramValue);
+        tempPointSpacing = paramValue as number;
+        setPointSpacing(tempPointSpacing);
         break;
       }
-
       case ID_SPARSENESS: {
-        tempSparseness = paramValue;
-        setSparseness(paramValue);
+        tempSparseness = paramValue as number;
+        setSparseness(tempSparseness);
+        break;
+      }
+      case ID_BORDER_POINTS: {
+        tempBorderPoints = paramValue as number;
+        setBorderPoints(tempBorderPoints);
+        break;
+      }
+      case ID_COLOR_SAMP_RADIUS: {
+        tempColorSampRadius = paramValue as number;
+        setColorSampRadius(tempColorSampRadius);
+        break;
+      }
+      case ID_SHOW_TRI_POINTS: {
+        tempShowTrianglePoints = paramValue as boolean;
+        setShowTrianglePoints(tempShowTrianglePoints);
         break;
       }
       default: {
@@ -87,26 +119,15 @@ export default function ApplicationGrid(props: any) {
       }
     }
 
-    console.log(
-      "edgeMinThreshold:",
-      tempMinThreshold,
-      "\nedgeMaxThreshold:",
-      tempMaxThreshold,
-      "\npointSpacing:",
-      tempPointSpacing,
-      "\nsparseness:",
-      tempSparseness
-    );
-
     processImage({
       imgElem: sourceImg,
       edgeMinThreshold: tempMinThreshold,
       edgeMaxThreshold: tempMaxThreshold,
       pointSpacing: tempPointSpacing,
       sparseness: tempSparseness,
-      borderPoints: "1",
-      smoothColors: "0",
-      showPoints: false,
+      borderPoints: tempBorderPoints,
+      colorSampRadius: tempColorSampRadius,
+      showPoints: tempShowTrianglePoints,
       pointsFn: setPointsDetected,
     });
   };
@@ -117,24 +138,36 @@ export default function ApplicationGrid(props: any) {
         <ImagePanelGrid>
           <ImagePanel panelName="sourceImage">
             <ImageCanvas imgElem={sourceImg} />
-            <div>Source Image</div>
+            <div>
+              <b>Source Image</b>
+            </div>
           </ImagePanel>
           <ImagePanel panelName="edgeImage">
             <EdgeCanvas />
-            <div>Edge Image</div>
+            <div>
+              <b>Edge Image</b>
+            </div>
           </ImagePanel>
           <ImagePanel panelName="polygonImage">
             <PolyCanvas />
-            <div>Polygon Image</div>
+            <div>
+              <b>Polygon Image</b>
+            </div>
           </ImagePanel>
         </ImagePanelGrid>
         <ControlsPanelGrid>
           <ControlsPanel>
-            Source
-            <FileInputButton fileFn={updateSourceImg} />
+            Upload an image to begin:
+            <FileInputButton fileFn={updateSourceImg} /><br/>
+            <DefaultFileButton
+              clickFn={updateSourceImg}
+              buttonTxt="Show Me The Bird!"
+              inputFile="media/Birb.jpg"
+            />
           </ControlsPanel>
           <ControlsPanel>
-            # Points: {pointsDetected}
+            <b># Points: </b>
+            {pointsDetected}
             {/* OpenCV minimum threshold level for Canny edge detection alg */}
             <RangeSliderBar
               id={ID_MIN_THRESHOLD}
@@ -143,7 +176,6 @@ export default function ApplicationGrid(props: any) {
               max="150"
               step="1"
               defaultValue={minThreshold}
-              callbackFn={setMinThreshold}
               rerenderFn={reprocessImage}
             />
             {/* OpenCV maximum threshold level for Canny edge detection alg */}
@@ -154,7 +186,6 @@ export default function ApplicationGrid(props: any) {
               max="300"
               step="1"
               defaultValue={maxThreshold}
-              callbackFn={setMaxThreshold}
               rerenderFn={reprocessImage}
             />
             {/* Minimum space allowed between points returned from edge detection */}
@@ -165,7 +196,6 @@ export default function ApplicationGrid(props: any) {
               max="30"
               step="1"
               defaultValue={pointSpacing}
-              callbackFn={setPointSpacing}
               rerenderFn={reprocessImage}
             />
             {/* Reduces the number of edge detected points by this factor without considering relative positioning */}
@@ -176,12 +206,40 @@ export default function ApplicationGrid(props: any) {
               max="30"
               step="1"
               defaultValue={sparseness}
-              callbackFn={setSparseness}
               rerenderFn={reprocessImage}
             />
           </ControlsPanel>
-
-          <ControlsPanel>Polygon</ControlsPanel>
+          <ControlsPanel>
+            {/* Number of border points along each image edge, spread out equally */}
+            {/* Not guaranteed to result in equal polygon spacing in relation to the edges of the image */}
+            <RangeSliderBar
+              id={ID_BORDER_POINTS}
+              name="# Border Points"
+              min="0"
+              max="10"
+              step="1"
+              defaultValue={borderPoints}
+              rerenderFn={reprocessImage}
+            />
+            {/* The rectangular 'radius' from the center of a given polygon in which all pixel colors will be averaged */}
+            {/* Not guaranteed that the pixels average will actually exist within the given polygon */}
+            <RangeSliderBar
+              id={ID_COLOR_SAMP_RADIUS}
+              name="Color Sample Radius"
+              min="0"
+              max="3"
+              step="1"
+              defaultValue={colorSampRadius}
+              rerenderFn={reprocessImage}
+            />
+            {/* Renders the points returned from the edge algorithm on top of the polygon image */}
+            <Checkbox
+              id={ID_SHOW_TRI_POINTS}
+              name="Show Triangle Points"
+              defaultValue={showTrianglePoints}
+              rerenderFn={reprocessImage}
+            />
+          </ControlsPanel>
         </ControlsPanelGrid>
       </main>
     </div>

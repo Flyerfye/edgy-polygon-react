@@ -4,8 +4,6 @@ export default function RangeSliderBar(props: any) {
   const sliderRef = useRef<HTMLInputElement | null>(null);
 
   const handleSliderChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log( "Slider", sliderRef.current?.name,
-    //   "has a value of", sliderRef.current?.value);
     props.rerenderFn(props.id, sliderRef.current?.value);
   };
 

@@ -2,12 +2,11 @@
 import Delaunay from "delaunay-fast";
 
 export function RenderPolygonFn(opts: any) {
-  console.log("RenderPolygon");
   opts.borderPoints = opts!.borderPoints! || defaults.borderPoints;
 
   opts.showPoints = opts!.showPoints! || defaults.showPoints;
 
-  opts.smoothColors = opts!.smoothColors! || defaults.smoothColors;
+  opts.colorSampRadius = opts!.colorSampRadius! || defaults.colorSampRadius;
 
   var canvas = polygonizeFromPts(opts.imgElem);
 
@@ -76,8 +75,8 @@ export function RenderPolygonFn(opts: any) {
       var colorArray: Uint8ClampedArray[] = [];
 
       // if any smoothing is to be performed, queue up pixels to be smoothed in square selection around the center pixel
-      if (opts.smoothColors > 0) {
-        var smoothDist = +opts.smoothColors;
+      if (opts.colorSampRadius > 0) {
+        var smoothDist = +opts.colorSampRadius;
 
         for (
           var x_smooth = 0 > centerX - smoothDist ? 0 : centerX - smoothDist;
@@ -136,7 +135,7 @@ export function RenderPolygonFn(opts: any) {
 var defaults = {
   borderPoints: 1,
   showPoints: false,
-  smoothColors: 0,
+  colorSampRadius: 0,
 };
 
 function componentToHex(c: number): string {

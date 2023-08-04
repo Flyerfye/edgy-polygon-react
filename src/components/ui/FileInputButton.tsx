@@ -1,8 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 
-export default function FileInputButton(props:any) {
+export default function FileInputButton(props: any) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (event.target.files && event.target.files.length > 0) {
       const inputFile = event.target.files[0];
       props.fileFn(inputFile);
@@ -20,10 +22,10 @@ export default function FileInputButton(props:any) {
       <input
         type="file"
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleFileInputChange}
       />
       <button onClick={handleClick}>Choose File</button>
     </div>
   );
-};
+}
