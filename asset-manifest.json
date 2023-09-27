@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/edgy-polygon-react/static/css/main.9358028e.css",
+    "main.js": "/edgy-polygon-react/static/js/main.c8464a6a.js",
+    "index.html": "/edgy-polygon-react/index.html",
+    "main.9358028e.css.map": "/edgy-polygon-react/static/css/main.9358028e.css.map",
+    "main.c8464a6a.js.map": "/edgy-polygon-react/static/js/main.c8464a6a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9358028e.css",
+    "static/js/main.c8464a6a.js"
+  ]
+}
