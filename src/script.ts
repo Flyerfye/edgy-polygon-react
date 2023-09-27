@@ -35,9 +35,22 @@ function processImageCallback(props: any): any {
   if (+props.sparseness > 1)
     cvDst = generateSparseMat(cvDst, +props.sparseness);
 
-  let dstPts = matToPoints(cvDst, props.pointsFn);
+  // console.log(
+  //   "Resizing",
+  //   props.imgElem.width,
+  //   props.imgElem.height,
+  //   props.edgeResizeFactor
+  // );
+  let cvDst_resized = new cv.Mat();
+  let dsize = new cv.Size(
+    props.imgElem.width * props.edgeResizeFactor,
+    props.imgElem.height * props.edgeResizeFactor
+  );
+  cv.resize(cvDst, cvDst_resized, dsize, 0, 0, cv.INTER_AREA);
+  // cv.imshow("edgeCanvas", cvDst);
+  cv.imshow("edgeCanvas", cvDst_resized);
 
-  cv.imshow("edgeCanvas", cvDst);
+  let dstPts = matToPoints(cvDst, props.polygonResizeFactor, props.pointsFn);
   cvSrc?.delete();
   cvDst.delete();
 
@@ -47,12 +60,30 @@ function processImageCallback(props: any): any {
     colorSampRadius: +props.colorSampRadius,
     showPoints: props.showPoints,
     imgElem: props.imgElem,
+    polygonResizeFactor: props.polygonResizeFactor,
     onSuccess: function (canvas: HTMLCanvasElement) {
       const polyCanvasDiv = document.getElementById("polyCanvas");
       polyCanvasDiv!.innerHTML = "";
+      // console.log("Polygon resize", props.polygonResizeFactor);
+      // resizeTo(canvas, props.polygonResizeFactor);
       polyCanvasDiv!.appendChild(canvas);
     },
   });
+}
+
+function resizeTo(canvas, pct) {
+  var tempCanvas = document.createElement("canvas");
+  var tctx = tempCanvas.getContext("2d");
+  var cw = canvas.width;
+  var ch = canvas.height;
+  tempCanvas.width = cw;
+  tempCanvas.height = ch;
+  tctx!.drawImage(canvas, 0, 0);
+  canvas.width *= pct;
+  canvas.height *= pct;
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(tempCanvas, 0, 0, cw, ch, 0, 0, cw * pct, ch * pct);
+  return tempCanvas;
 }
 
 // Filters the points in the image matrix based upon a specified minimum distance between px
@@ -113,7 +144,11 @@ export function generateSparseMat(mat: any, sparseness: any): any {
 }
 
 // Converts the matrix of values returned from edge detection to an array of points
-export function matToPoints(mat: any, pointsFn: any): number[][] {
+export function matToPoints(
+  mat: any,
+  resizeFactor: number,
+  pointsFn: any
+): number[][] {
   //get the dimensions of the Mat object
   var rows = mat.rows;
   var cols = mat.cols;
@@ -130,7 +165,10 @@ export function matToPoints(mat: any, pointsFn: any): number[][] {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < cols; j++) {
       if (mat.charAt(i * cols + j) !== 0) {
-        points.push([i, j]);
+        points.push([
+          Math.round(i * resizeFactor),
+          Math.round(j * resizeFactor),
+        ]);
         totalPoints++;
       }
     }

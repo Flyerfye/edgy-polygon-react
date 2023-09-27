@@ -11,6 +11,8 @@ import PolyCanvas from "./PolyCanvas";
 import RangeSliderBar from "../ui/RangeSliderBar";
 import Checkbox from "../ui/Checkbox";
 import DefaultFileButton from "../ui/DefaultFileButton";
+import MainImage from "./MainImage";
+import SidebarImages from "./SidebarImages";
 
 export default function ApplicationGrid(props: any) {
   const ID_MIN_THRESHOLD = "edge-min-threshold";
@@ -20,6 +22,22 @@ export default function ApplicationGrid(props: any) {
   const ID_BORDER_POINTS = "border-points";
   const ID_COLOR_SAMP_RADIUS = "color-sample-radius";
   const ID_SHOW_TRI_POINTS = "show-triangle-points";
+  const ID_WINDOW_RESIZE = "window-resize";
+
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const [mainImagePanelSize, setMainImagePanelSize] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [sideImagePanelSize, setSideImagePanelSize] = useState({
+    width: 0,
+    height: 0,
+  });
+  const [mainResizeFactor, setMainResizeFactor] = useState(0.1);
+  const [sideResizeFactor, setSideResizeFactor] = useState(0.1);
 
   //source image params
   const [sourceImg, setSourceImg] = useState<HTMLImageElement | null>(null);
@@ -38,6 +56,72 @@ export default function ApplicationGrid(props: any) {
     false
   );
 
+  const updatePanelLayout = (imgWidth, imgHeight) => {
+    const goldenRatio = 1.618;
+    var imageGridWidth = windowSize.width;
+    var imageGridHeight = windowSize.height;
+
+    if (imageGridWidth < 300) {
+      imageGridWidth = 300;
+      imageGridHeight = 185;
+    }
+    // if the window is too wide, use the height as the constraint
+    else if (imageGridWidth / imageGridHeight > goldenRatio) {
+      imageGridWidth = Math.floor(imageGridHeight * goldenRatio);
+    }
+    // if the window is too tall, use the width as the constraint
+    else {
+      imageGridHeight = Math.floor(imageGridWidth / goldenRatio);
+    }
+
+    // via the golden ratio, the main image section is square
+    setMainImagePanelSize({
+      width: imageGridHeight,
+      height: imageGridHeight,
+    });
+    setSideImagePanelSize({
+      width: imageGridWidth - imageGridHeight,
+      height: imageGridHeight / 2,
+    });
+
+    // if ratio of image width:height > that of main panel, the width is the limiting factor
+    // 30 pixels adjustment accounts for the horizontal padding of the elements
+    let imageRatio = imgWidth / imgHeight;
+    let tempMainResizeFactor = 1;
+    if (imageRatio >= 1) {
+      tempMainResizeFactor = (imageGridHeight - 30) / imgWidth;
+    } else {
+      tempMainResizeFactor = (imageGridHeight) / imgHeight;
+    }
+
+    // if ratio of image width:height > that of side panel, the width is the limiting factor
+    let sidePanelRatio =
+      (imageGridWidth - imageGridHeight) / (imageGridHeight / 2);
+    let tempSideResizeFactor = 1;
+    if (imageRatio >= sidePanelRatio) {
+      tempSideResizeFactor = (imageGridWidth - imageGridHeight - 30) / imgWidth;
+    } else {
+      tempSideResizeFactor = imageGridHeight / 2 / imgHeight;
+    }
+
+    console.log("Window size", windowSize.width, ",", windowSize.height);
+    console.log("Image Grid size", imageGridWidth, ",", imageGridHeight);
+    console.log("Main Panel size", imageGridHeight, ",", imageGridHeight);
+    console.log(
+      "Side Panel size",
+      imageGridWidth - imageGridHeight,
+      ",",
+      imageGridHeight / 2
+    );
+    setMainResizeFactor((prevMainResizeFactor) => tempMainResizeFactor);
+    setSideResizeFactor((prevSideResizeFactor) => tempSideResizeFactor);
+
+    return {
+      mainResizeValue: tempMainResizeFactor,
+      sideResizeValue: tempSideResizeFactor,
+    };
+  };
+
   const updateSourceImg = (file: File) => {
     //reads and process the source image
     const reader = new FileReader();
@@ -47,9 +131,15 @@ export default function ApplicationGrid(props: any) {
       image.id = "inputImage";
       image.onload = () => {
         setSourceImg(image);
+        let { mainResizeValue, sideResizeValue } = updatePanelLayout(
+          image.width,
+          image.height
+        );
 
         processImage({
           imgElem: image,
+          edgeResizeFactor: sideResizeValue,
+          polygonResizeFactor: mainResizeValue,
           edgeMinThreshold: minThreshold,
           edgeMaxThreshold: maxThreshold,
           pointSpacing: pointSpacing,
@@ -114,13 +204,23 @@ export default function ApplicationGrid(props: any) {
         setShowTrianglePoints(tempShowTrianglePoints);
         break;
       }
+      case ID_WINDOW_RESIZE: {
+        // TODO: handle resize case 
+        break;
+      }
       default: {
         throw new Error("Invalid parameter specified");
       }
     }
 
+    let { mainResizeValue, sideResizeValue } = updatePanelLayout(
+      sourceImg?.width,
+      sourceImg?.height
+    );
     processImage({
       imgElem: sourceImg,
+      edgeResizeFactor: sideResizeValue,
+      polygonResizeFactor: mainResizeValue,
       edgeMinThreshold: tempMinThreshold,
       edgeMaxThreshold: tempMaxThreshold,
       pointSpacing: tempPointSpacing,
@@ -136,33 +236,38 @@ export default function ApplicationGrid(props: any) {
     <div>
       <main>
         <ImagePanelGrid>
-          <ImagePanel panelName="sourceImage">
-            <ImageCanvas imgElem={sourceImg} />
-            <div>
-              <b>Source Image</b>
-            </div>
-          </ImagePanel>
-          <ImagePanel panelName="edgeImage">
-            <EdgeCanvas />
-            <div>
-              <b>Edge Image</b>
-            </div>
-          </ImagePanel>
-          <ImagePanel panelName="polygonImage">
-            <PolyCanvas />
-            <div>
-              <b>Polygon Image</b>
-            </div>
-          </ImagePanel>
+          <MainImage>
+            <ImagePanel panelName="polygonImage">
+              <PolyCanvas />
+            </ImagePanel>
+          </MainImage>
+          <SidebarImages>
+            <ImagePanel panelName="sourceImage">
+              <ImageCanvas
+                imgElem={sourceImg}
+                resizeFactor={sideResizeFactor}
+              />
+            </ImagePanel>
+            <ImagePanel panelName="edgeImage">
+              <EdgeCanvas />
+            </ImagePanel>
+          </SidebarImages>
         </ImagePanelGrid>
         <ControlsPanelGrid>
           <ControlsPanel>
             Upload an image to begin:
-            <FileInputButton fileFn={updateSourceImg} /><br/>
+            <FileInputButton fileFn={updateSourceImg} />
+            <br />
             <DefaultFileButton
               clickFn={updateSourceImg}
               buttonTxt="Show Me The Bird!"
               inputFile="media/Birb.jpg"
+            />
+            <br />
+            <DefaultFileButton
+              clickFn={updateSourceImg}
+              buttonTxt="Rectangle"
+              inputFile="media/Checker_horiz.png"
             />
           </ControlsPanel>
           <ControlsPanel>

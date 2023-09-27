@@ -21,8 +21,11 @@ export function RenderPolygonFn(opts: any) {
     var canvas = document.createElement("canvas");
     var points = opts.points;
 
-    var imageWidth = +image.width;
-    var imageHeight = +image.height;
+    var imageWidth = +image.width * opts.polygonResizeFactor;
+    var imageHeight = +image.height * opts.polygonResizeFactor;
+
+    // console.log("Poly width", image.width, image.width * opts.polygonResizeFactor)
+    // console.log("Poly height", image.height, image.height * opts.polygonResizeFactor)
 
     canvas.width = imageWidth;
     canvas.height = imageHeight;

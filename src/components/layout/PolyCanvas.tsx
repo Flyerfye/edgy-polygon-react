@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 
 export default function PolyCanvas(props: any) {
-  useEffect(() => {
-  });
-
   return (
     <div>
       <div className="polyCanvasClass" id="polyCanvas">
