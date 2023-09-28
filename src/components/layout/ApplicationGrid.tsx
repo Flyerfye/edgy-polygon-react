@@ -44,9 +44,9 @@ export default function ApplicationGrid(props: any) {
 
   //edge image params
   const [pointsDetected, setPointsDetected] = useState<number | null>(0);
-  const [minThreshold, setMinThreshold] = useState<number | null>(80);
-  const [maxThreshold, setMaxThreshold] = useState<number | null>(120);
-  const [pointSpacing, setPointSpacing] = useState<number | null>(0);
+  const [minThreshold, setMinThreshold] = useState<number | null>(25);
+  const [maxThreshold, setMaxThreshold] = useState<number | null>(100);
+  const [pointSpacing, setPointSpacing] = useState<number | null>(10);
   const [sparseness, setSparseness] = useState<number | null>(1);
 
   //poly image params
@@ -234,6 +234,15 @@ export default function ApplicationGrid(props: any) {
 
   return (
     <div>
+      <h1>Welcome!</h1>
+      <p>This app is a project I am using to teach myself about Typescript and React. I've had my eye on creating low-polygon art for <a href="https://twitter.com/goodflyerfye/status/991529959167483904">a while</a> and wanted to try implementing an approach to do it dynamically. There are already some <a href="https://github.com/evansque/polygonize">good examples</a> out there that helped a lot with the image processing/figuring out the math-y bits and learning React is a (relatively) painless process.</p>
+
+      <h2>Quick Start:</h2>
+      <ol>
+        <b><li>Click 'Choose File' or 'Show Me The Bird!' to load an image</li></b>
+        <b><li>Fiddle with the controls to make it look pretty</li></b>
+        <b><li>Feel free to send me any input over fb (if we're friends) or send me an e-mail: Issa.Beekun at gmail</li></b>
+      </ol>     
       <main>
         <ImagePanelGrid>
           <MainImage>
