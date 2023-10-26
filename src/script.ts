@@ -60,13 +60,20 @@ function processImageCallback(props: any): any {
     colorSampRadius: +props.colorSampRadius,
     showPoints: props.showPoints,
     imgElem: props.imgElem,
+    saveImage: props.saveImage,
     polygonResizeFactor: props.polygonResizeFactor,
     onSuccess: function (canvas: HTMLCanvasElement) {
-      const polyCanvasDiv = document.getElementById("polyCanvas");
-      polyCanvasDiv!.innerHTML = "";
-      // console.log("Polygon resize", props.polygonResizeFactor);
-      // resizeTo(canvas, props.polygonResizeFactor);
-      polyCanvasDiv!.appendChild(canvas);
+      if(props.saveImage) {
+        const polyCanvasHiddenDiv = document.getElementById("polyCanvasHiddenDiv");
+        polyCanvasHiddenDiv!.innerHTML = "";
+        polyCanvasHiddenDiv!.appendChild(canvas);
+      } else {
+        const polyCanvasDiv = document.getElementById("polyCanvasDiv");
+        polyCanvasDiv!.innerHTML = "";
+        // console.log("Polygon resize", props.polygonResizeFactor);
+        // resizeTo(canvas, props.polygonResizeFactor);
+        polyCanvasDiv!.appendChild(canvas);
+      }
     },
   });
 }

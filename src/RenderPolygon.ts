@@ -8,13 +8,13 @@ export function RenderPolygonFn(opts: any) {
 
   opts.colorSampRadius = opts!.colorSampRadius! || defaults.colorSampRadius;
 
-  var canvas = polygonizeFromPts(opts.imgElem);
+  var canvas = polygonizeFromPts(opts.imgElem, opts.saveImage);
 
   if (opts.onSuccess) {
     opts.onSuccess(canvas);
   }
 
-  function polygonizeFromPts(image: HTMLImageElement) {
+  function polygonizeFromPts(image: HTMLImageElement, saveImage: boolean) {
     var outputCanvas: HTMLCanvasElement = document.createElement("canvas");
     var ctx: CanvasRenderingContext2D = outputCanvas!.getContext("2d")!;
 
@@ -24,17 +24,23 @@ export function RenderPolygonFn(opts: any) {
     var imageWidth = +image.width * opts.polygonResizeFactor;
     var imageHeight = +image.height * opts.polygonResizeFactor;
 
-    // console.log("Poly width", image.width, image.width * opts.polygonResizeFactor)
-    // console.log("Poly height", image.height, image.height * opts.polygonResizeFactor)
+    outputCanvas.id = "polyCanvas";
+
+    //when generating the polygon image for saving, we don't want any resizing based on viewport size
+    if (saveImage) {
+      imageWidth = +image.width;
+      imageHeight = +image.height;
+      outputCanvas.id = "hiddenPolyCanvas";
+    }
+
+    outputCanvas.width = imageWidth;
+    outputCanvas.height = imageHeight;
 
     canvas.width = imageWidth;
     canvas.height = imageHeight;
     canvas!
       .getContext("2d", { willReadFrequently: true })!
       .drawImage(image, 0, 0, imageWidth, imageHeight);
-
-    outputCanvas.width = imageWidth;
-    outputCanvas.height = imageHeight;
 
     //add bounding points for the edges
     //points added to the overall array are not referenced as x, y but rather as row, col which may seem inverted

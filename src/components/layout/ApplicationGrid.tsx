@@ -1,4 +1,7 @@
 import { useState } from "react";
+import classes from "./ApplicationGrid.module.css";
+import Backdrop from "./Backdrop";
+import IntroModal from "./IntroModal";
 import ImagePanelGrid from "./ImagePanelGrid";
 import ImagePanel from "./ImagePanel";
 import ImageCanvas from "./ImageCanvas";
@@ -8,35 +11,43 @@ import ControlsPanel from "./ControlsPanel";
 import FileInputButton from "../ui/FileInputButton";
 import { processImage } from "../../script";
 import PolyCanvas from "./PolyCanvas";
-import RangeSliderBar from "../ui/RangeSliderBar";
-import Checkbox from "../ui/Checkbox";
+import MultiRangeSliderBar from "../ui/MultiRangeSliderBar";
 import DefaultFileButton from "../ui/DefaultFileButton";
 import MainImage from "./MainImage";
 import SidebarImages from "./SidebarImages";
+import HeaderPanel from "./HeaderPanel";
+import FileExportButton from "../ui/FileExportButton";
+import ToggleButton from "../ui/ToggleButton";
+import FooterPanel from "./FooterPanel";
+import AboutMeModal from "./AboutMeModal";
 
 export default function ApplicationGrid(props: any) {
   const ID_MIN_THRESHOLD = "edge-min-threshold";
   const ID_MAX_THRESHOLD = "edge-max-threshold";
+  const ID_MIN_MAX_THRESHOLD = "edge-min-max-threshold";
   const ID_POINT_SPACING = "point-spacing";
   const ID_SPARSENESS = "sparseness";
-  const ID_BORDER_POINTS = "border-points";
   const ID_COLOR_SAMP_RADIUS = "color-sample-radius";
   const ID_SHOW_TRI_POINTS = "show-triangle-points";
+  const ID_SAVE_IMAGE = "save-image";
   const ID_WINDOW_RESIZE = "window-resize";
+
+  const [introModalOpen, setIntroModalOpen] = useState(true);
+  const [aboutMeModalOpen, setAboutMeModalOpen] = useState(false);
 
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [mainImagePanelSize, setMainImagePanelSize] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [sideImagePanelSize, setSideImagePanelSize] = useState({
-    width: 0,
-    height: 0,
-  });
-  const [mainResizeFactor, setMainResizeFactor] = useState(0.1);
+  // const [mainImagePanelSize, setMainImagePanelSize] = useState({
+  //   width: 0,
+  //   height: 0,
+  // });
+  // const [sideImagePanelSize, setSideImagePanelSize] = useState({
+  //   width: 0,
+  //   height: 0,
+  // });
+  // const [mainResizeFactor, setMainResizeFactor] = useState(0.1);
   const [sideResizeFactor, setSideResizeFactor] = useState(0.1);
 
   //source image params
@@ -50,11 +61,62 @@ export default function ApplicationGrid(props: any) {
   const [sparseness, setSparseness] = useState<number | null>(1);
 
   //poly image params
-  const [borderPoints, setBorderPoints] = useState<number | null>(0);
+  const [borderPoints, setBorderPoints] = useState<number | null>(10);
   const [colorSampRadius, setColorSampRadius] = useState<number | null>(0);
   const [showTrianglePoints, setShowTrianglePoints] = useState<boolean | null>(
     false
   );
+
+  const pointSpacingMarks = {
+    0: "0",
+    30: "30",
+  };
+
+  const thresholdMarks = {
+    0: "0",
+    300: "100",
+  };
+
+  const sparsenessMarks = {
+    1: "1",
+    30: "30",
+  };
+
+  const sampleRadiusMarks = {
+    0: "0",
+    3: "3",
+  };
+
+  const closeIntroAndUploadSourceImg = (file: File) => {
+    setIntroModalOpen(false);
+    updateSourceImg(file);
+  };
+
+  const openAboutMe = () => {
+    setAboutMeModalOpen(true);
+  };
+
+  const closeAboutMe = () => {
+    setAboutMeModalOpen(false);
+  };
+
+  const downloadPolyImg = () => {
+    const canvas = document.getElementById("hiddenPolyCanvas");
+    console.log("downloadPolyImg", canvas);
+    // Ensure the canvas element exists
+    if (canvas instanceof HTMLCanvasElement) {
+      const polyUrl = canvas.toDataURL("image/png");
+
+      // Create an anchor element
+      const a = document.createElement("a");
+      a.href = polyUrl;
+      a.download = "polyImage.png"; // Set the desired file name
+
+      console.log("Download", a);
+      // Trigger a click event on the anchor element
+      a.click();
+    }
+  };
 
   const updatePanelLayout = (imgWidth, imgHeight) => {
     const goldenRatio = 1.618;
@@ -74,15 +136,15 @@ export default function ApplicationGrid(props: any) {
       imageGridHeight = Math.floor(imageGridWidth / goldenRatio);
     }
 
-    // via the golden ratio, the main image section is square
-    setMainImagePanelSize({
-      width: imageGridHeight,
-      height: imageGridHeight,
-    });
-    setSideImagePanelSize({
-      width: imageGridWidth - imageGridHeight,
-      height: imageGridHeight / 2,
-    });
+    // // via the golden ratio, the main image section is square
+    // setMainImagePanelSize({
+    //   width: imageGridHeight,
+    //   height: imageGridHeight,
+    // });
+    // setSideImagePanelSize({
+    //   width: imageGridWidth - imageGridHeight,
+    //   height: imageGridHeight / 2,
+    // });
 
     // if ratio of image width:height > that of main panel, the width is the limiting factor
     // 30 pixels adjustment accounts for the horizontal padding of the elements
@@ -91,29 +153,21 @@ export default function ApplicationGrid(props: any) {
     if (imageRatio >= 1) {
       tempMainResizeFactor = (imageGridHeight - 30) / imgWidth;
     } else {
-      tempMainResizeFactor = (imageGridHeight) / imgHeight;
+      tempMainResizeFactor = imageGridHeight / imgHeight;
     }
 
     // if ratio of image width:height > that of side panel, the width is the limiting factor
+    // the 5px reduction in side image height is to adjust for the 10px gap between those two images
     let sidePanelRatio =
-      (imageGridWidth - imageGridHeight) / (imageGridHeight / 2);
+      (imageGridWidth - imageGridHeight) / (imageGridHeight / 2 - 5);
     let tempSideResizeFactor = 1;
     if (imageRatio >= sidePanelRatio) {
       tempSideResizeFactor = (imageGridWidth - imageGridHeight - 30) / imgWidth;
     } else {
-      tempSideResizeFactor = imageGridHeight / 2 / imgHeight;
+      tempSideResizeFactor = (imageGridHeight / 2 - 5) / imgHeight;
     }
 
-    console.log("Window size", windowSize.width, ",", windowSize.height);
-    console.log("Image Grid size", imageGridWidth, ",", imageGridHeight);
-    console.log("Main Panel size", imageGridHeight, ",", imageGridHeight);
-    console.log(
-      "Side Panel size",
-      imageGridWidth - imageGridHeight,
-      ",",
-      imageGridHeight / 2
-    );
-    setMainResizeFactor((prevMainResizeFactor) => tempMainResizeFactor);
+    // setMainResizeFactor((prevMainResizeFactor) => tempMainResizeFactor);
     setSideResizeFactor((prevSideResizeFactor) => tempSideResizeFactor);
 
     return {
@@ -123,6 +177,7 @@ export default function ApplicationGrid(props: any) {
   };
 
   const updateSourceImg = (file: File) => {
+    console.log("Default File Button updateSourceImg");
     //reads and process the source image
     const reader = new FileReader();
     const image = new Image();
@@ -158,54 +213,78 @@ export default function ApplicationGrid(props: any) {
     reader.readAsDataURL(file);
   };
 
-  const reprocessImage = (paramName: string, paramValue: number | boolean) => {
+  const reprocessImage = (
+    paramName: string,
+    paramValue: number | [number, number] | boolean
+  ) => {
+    let { mainResizeValue, sideResizeValue } = updatePanelLayout(
+      sourceImg?.width,
+      sourceImg?.height
+    );
+
     // since state updates async, it is quicker to make the call to process image
-    // using the updated param value directly
-    let tempMinThreshold = minThreshold;
-    let tempMaxThreshold = maxThreshold;
-    let tempPointSpacing = pointSpacing;
-    let tempSparseness = sparseness;
-    let tempBorderPoints = borderPoints;
-    let tempColorSampRadius = colorSampRadius;
-    let tempShowTrianglePoints = showTrianglePoints;
+    // using a prop containing the updated param value directly
+    let reprocessProps = {
+      imgElem: sourceImg,
+      edgeResizeFactor: sideResizeValue,
+      polygonResizeFactor: mainResizeValue,
+      edgeMinThreshold: minThreshold,
+      edgeMaxThreshold: maxThreshold,
+      pointSpacing: pointSpacing,
+      sparseness: sparseness,
+      borderPoints: borderPoints,
+      colorSampRadius: colorSampRadius,
+      showPoints: showTrianglePoints,
+      saveImage: false,
+      pointsFn: setPointsDetected,
+    };
+
     switch (paramName) {
       case ID_MIN_THRESHOLD: {
-        tempMinThreshold = paramValue as number;
-        setMinThreshold(tempMinThreshold);
+        reprocessProps.edgeMinThreshold = paramValue as number;
+        setMinThreshold(reprocessProps.edgeMinThreshold);
         break;
       }
       case ID_MAX_THRESHOLD: {
-        tempMaxThreshold = paramValue as number;
-        setMaxThreshold(tempMaxThreshold);
+        reprocessProps.edgeMaxThreshold = paramValue as number;
+        setMaxThreshold(reprocessProps.edgeMaxThreshold);
         break;
       }
       case ID_POINT_SPACING: {
-        tempPointSpacing = paramValue as number;
-        setPointSpacing(tempPointSpacing);
+        reprocessProps.pointSpacing = paramValue[0] as number;
+        setPointSpacing(reprocessProps.pointSpacing);
         break;
       }
       case ID_SPARSENESS: {
-        tempSparseness = paramValue as number;
-        setSparseness(tempSparseness);
-        break;
-      }
-      case ID_BORDER_POINTS: {
-        tempBorderPoints = paramValue as number;
-        setBorderPoints(tempBorderPoints);
+        reprocessProps.sparseness = paramValue as number;
+        setSparseness(reprocessProps.sparseness);
         break;
       }
       case ID_COLOR_SAMP_RADIUS: {
-        tempColorSampRadius = paramValue as number;
-        setColorSampRadius(tempColorSampRadius);
+        reprocessProps.colorSampRadius = paramValue as number;
+        setColorSampRadius(reprocessProps.colorSampRadius);
         break;
       }
       case ID_SHOW_TRI_POINTS: {
-        tempShowTrianglePoints = paramValue as boolean;
-        setShowTrianglePoints(tempShowTrianglePoints);
+        reprocessProps.showPoints = paramValue as boolean;
+        setShowTrianglePoints(reprocessProps.showPoints);
+        break;
+      }
+      case ID_MIN_MAX_THRESHOLD: {
+        reprocessProps.edgeMinThreshold = Math.min(...(paramValue as number[]));
+        setMinThreshold(reprocessProps.edgeMinThreshold);
+        reprocessProps.edgeMaxThreshold = Math.max(...(paramValue as number[]));
+        setMaxThreshold(reprocessProps.edgeMaxThreshold);
+        break;
+      }
+      case ID_SAVE_IMAGE: {
+        //when generating the polygon image for saving, we don't want any resizing based on viewport size
+        reprocessProps.saveImage = true;
+        reprocessProps.polygonResizeFactor = 1;
         break;
       }
       case ID_WINDOW_RESIZE: {
-        // TODO: handle resize case 
+        // TODO: handle resize case
         break;
       }
       default: {
@@ -213,37 +292,36 @@ export default function ApplicationGrid(props: any) {
       }
     }
 
-    let { mainResizeValue, sideResizeValue } = updatePanelLayout(
-      sourceImg?.width,
-      sourceImg?.height
-    );
-    processImage({
-      imgElem: sourceImg,
-      edgeResizeFactor: sideResizeValue,
-      polygonResizeFactor: mainResizeValue,
-      edgeMinThreshold: tempMinThreshold,
-      edgeMaxThreshold: tempMaxThreshold,
-      pointSpacing: tempPointSpacing,
-      sparseness: tempSparseness,
-      borderPoints: tempBorderPoints,
-      colorSampRadius: tempColorSampRadius,
-      showPoints: tempShowTrianglePoints,
-      pointsFn: setPointsDetected,
-    });
+    processImage(reprocessProps);
   };
 
   return (
     <div>
-      <h1>Welcome!</h1>
-      <p>This app is a project I am using to teach myself about Typescript and React. I've had my eye on creating low-polygon art for <a href="https://twitter.com/goodflyerfye/status/991529959167483904">a while</a> and wanted to try implementing an approach to do it dynamically. There are already some <a href="https://github.com/evansque/polygonize">good examples</a> out there that helped a lot with the image processing/figuring out the math-y bits and learning React is a (relatively) painless process.</p>
-
-      <h2>Quick Start:</h2>
-      <ol>
-        <b><li>Click 'Choose File' or 'Show Me The Bird!' to load an image</li></b>
-        <b><li>Fiddle with the controls to make it look pretty</li></b>
-        <b><li>Feel free to send me any input over fb (if we're friends) or send me an e-mail: Issa.Beekun at gmail</li></b>
-      </ol>     
-      <main>
+      {/* display the IntroModal when the app is first loaded */}
+      {introModalOpen && (
+        <IntroModal closeAndUploadImg={closeIntroAndUploadSourceImg} />
+      )}
+      {aboutMeModalOpen && <AboutMeModal closeFn={closeAboutMe} />}
+      {(introModalOpen || aboutMeModalOpen) && <Backdrop />}
+      <main className={classes.main}>
+        <HeaderPanel>
+          <FileInputButton
+            className={classes.button}
+            fileFn={updateSourceImg}
+          />
+          <DefaultFileButton
+            className={classes.button}
+            clickFn={updateSourceImg}
+            buttonTxt="Show Me The Bird!"
+            inputFile="media/Birb.jpg"
+          />
+          <FileExportButton
+            className={classes.button}
+            rerenderId={ID_SAVE_IMAGE}
+            rerenderFn={reprocessImage}
+            clickFn={downloadPolyImg}
+          />
+        </HeaderPanel>
         <ImagePanelGrid>
           <MainImage>
             <ImagePanel panelName="polygonImage">
@@ -262,28 +340,52 @@ export default function ApplicationGrid(props: any) {
             </ImagePanel>
           </SidebarImages>
         </ImagePanelGrid>
+
+        <div className={classes.pointsInfoContainer}>
+          <table>
+            <tr>
+              <th>
+                <b># Polygon Points:</b> {pointsDetected}
+              </th>
+              <th>
+                <b>
+                  {/* Renders the points returned from the edge algorithm on top of the polygon image */}
+                  {/* <Checkbox
+                      id={ID_SHOW_TRI_POINTS}
+                      name="Show Points"
+                      defaultValue={showTrianglePoints}
+                      rerenderFn={reprocessImage}
+                    /> */}
+                  <ToggleButton
+                    className={classes.button}
+                    rerenderId={ID_SHOW_TRI_POINTS}
+                    rerenderFn={reprocessImage}
+                    textA="Show Points"
+                    textB="Hide Points"
+                  />
+                </b>
+              </th>
+            </tr>
+          </table>
+        </div>
+
         <ControlsPanelGrid>
           <ControlsPanel>
-            Upload an image to begin:
-            <FileInputButton fileFn={updateSourceImg} />
-            <br />
-            <DefaultFileButton
-              clickFn={updateSourceImg}
-              buttonTxt="Show Me The Bird!"
-              inputFile="media/Birb.jpg"
+            {/* OpenCV min/max threshold level for Canny edge detection alg */}
+            <MultiRangeSliderBar
+              id={ID_MIN_MAX_THRESHOLD}
+              name="Detection Threshold"
+              tooltip="The upper and lower thresholds for edge detection in source image.
+              Lower values for either will produce a more detailed main image."
+              min={0}
+              max={300}
+              step="1"
+              values={[minThreshold, maxThreshold]}
+              customMarks={thresholdMarks}
+              rerenderFn={reprocessImage}
             />
-            <br />
-            <DefaultFileButton
-              clickFn={updateSourceImg}
-              buttonTxt="Rectangle"
-              inputFile="media/Checker_horiz.png"
-            />
-          </ControlsPanel>
-          <ControlsPanel>
-            <b># Points: </b>
-            {pointsDetected}
             {/* OpenCV minimum threshold level for Canny edge detection alg */}
-            <RangeSliderBar
+            {/* <RangeSliderBar
               id={ID_MIN_THRESHOLD}
               name="Min Level"
               min="0"
@@ -291,9 +393,9 @@ export default function ApplicationGrid(props: any) {
               step="1"
               defaultValue={minThreshold}
               rerenderFn={reprocessImage}
-            />
+            /> */}
             {/* OpenCV maximum threshold level for Canny edge detection alg */}
-            <RangeSliderBar
+            {/* <RangeSliderBar
               id={ID_MAX_THRESHOLD}
               name="Max Level"
               min="50"
@@ -301,43 +403,10 @@ export default function ApplicationGrid(props: any) {
               step="1"
               defaultValue={maxThreshold}
               rerenderFn={reprocessImage}
-            />
-            {/* Minimum space allowed between points returned from edge detection */}
-            <RangeSliderBar
-              id={ID_POINT_SPACING}
-              name="Min Spacing"
-              min="0"
-              max="30"
-              step="1"
-              defaultValue={pointSpacing}
-              rerenderFn={reprocessImage}
-            />
-            {/* Reduces the number of edge detected points by this factor without considering relative positioning */}
-            <RangeSliderBar
-              id={ID_SPARSENESS}
-              name="Sparseness"
-              min="1"
-              max="30"
-              step="1"
-              defaultValue={sparseness}
-              rerenderFn={reprocessImage}
-            />
-          </ControlsPanel>
-          <ControlsPanel>
-            {/* Number of border points along each image edge, spread out equally */}
-            {/* Not guaranteed to result in equal polygon spacing in relation to the edges of the image */}
-            <RangeSliderBar
-              id={ID_BORDER_POINTS}
-              name="# Border Points"
-              min="0"
-              max="10"
-              step="1"
-              defaultValue={borderPoints}
-              rerenderFn={reprocessImage}
-            />
+            /> */}
             {/* The rectangular 'radius' from the center of a given polygon in which all pixel colors will be averaged */}
             {/* Not guaranteed that the pixels average will actually exist within the given polygon */}
-            <RangeSliderBar
+            {/* <RangeSliderBar
               id={ID_COLOR_SAMP_RADIUS}
               name="Color Sample Radius"
               min="0"
@@ -345,16 +414,102 @@ export default function ApplicationGrid(props: any) {
               step="1"
               defaultValue={colorSampRadius}
               rerenderFn={reprocessImage}
-            />
-            {/* Renders the points returned from the edge algorithm on top of the polygon image */}
-            <Checkbox
-              id={ID_SHOW_TRI_POINTS}
-              name="Show Triangle Points"
-              defaultValue={showTrianglePoints}
+            /> */}
+            <MultiRangeSliderBar
+              id={ID_COLOR_SAMP_RADIUS}
+              name="Color Sample Radius"
+              tooltip="Defines how accurately each polygon reflects the colors in the same part of the original image.
+              Increasing this value will make the main image look more realistic."
+              min={0}
+              max={3}
+              step="1"
+              values={[colorSampRadius]}
+              customMarks={sampleRadiusMarks}
               rerenderFn={reprocessImage}
             />
           </ControlsPanel>
+          <ControlsPanel>
+            {/* Minimum space allowed between points returned from edge detection */}
+            {/* <RangeSliderBar
+              id={ID_POINT_SPACING}
+              name="Min Spacing"
+              min="0"
+              max="30"
+              step="1"
+              defaultValue={pointSpacing}
+              rerenderFn={reprocessImage}
+            /> */}
+            <MultiRangeSliderBar
+              id={ID_POINT_SPACING}
+              name="Min Point Spacing"
+              tooltip="Minimum distance between any two points used for polygon vertices.
+              Increasing this value will result in larger polygons in the main image."
+              min={0}
+              max={30}
+              step="1"
+              values={[pointSpacing]}
+              customMarks={pointSpacingMarks}
+              rerenderFn={reprocessImage}
+            />
+            {/* Reduces the number of edge detected points by this factor without considering relative positioning */}
+            {/* <RangeSliderBar
+              id={ID_SPARSENESS}
+              name="Sparseness"
+              min="1"
+              max="30"
+              step="1"
+              defaultValue={sparseness}
+              rerenderFn={reprocessImage}
+            /> */}
+            <MultiRangeSliderBar
+              id={ID_SPARSENESS}
+              name="Random Spacing"
+              tooltip="Randomizes the spacing between two points by the specified factor.
+              Increasing this will reduce how much the detected edges form the main image."
+              min={1}
+              max={30}
+              step="1"
+              values={[sparseness]}
+              customMarks={sparsenessMarks}
+              rerenderFn={reprocessImage}
+            />
+            {/* Number of border points along each image edge, spread out equally */}
+            {/* Not guaranteed to result in equal polygon spacing in relation to the edges of the image */}
+            {/* <RangeSliderBar
+              id={ID_BORDER_POINTS}
+              name="# Border Points"
+              min="0"
+              max="10"
+              step="1"
+              defaultValue={borderPoints}
+              rerenderFn={reprocessImage}
+            /> */}
+          </ControlsPanel>
         </ControlsPanelGrid>
+        <FooterPanel>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <tr>
+              <td className="link">
+                {/* It is convention not to use a href tags when there is no navigation to another page
+                Using a disguised button here instead */}
+                <button className={classes.buttonLink} onClick={openAboutMe}>
+                  About Me
+                </button>
+                {/* <a href="#" onClick={openAboutMe}>
+                  About Me
+                </a> */}
+              </td>
+              <td className="link">
+                <a href="https://www.linkedin.com/in/issabeekun/">LinkedIn</a>
+              </td>
+              <td className="link">
+                <a href="https://github.com/Flyerfye/edgy-polygon-react">
+                  GitHub
+                </a>
+              </td>
+            </tr>
+          </table>
+        </FooterPanel>
       </main>
     </div>
   );

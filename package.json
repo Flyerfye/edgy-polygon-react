@@ -13,12 +13,13 @@
     "amd": "^0.0.0",
     "delaunay-fast": "^1.0.1",
     "mirada": "^0.0.15",
+    "rc-slider": "^10.3.1",
     "react": "^18.2.0",
     "react-app-rewired": "^2.2.1",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "requirejs": "^2.3.6",
-    "typescript": "^5.1.6",
+    "typescript": "5.1.6",
     "web-vitals": "^3.4.0"
   },
   "browser": {
@@ -29,6 +30,8 @@
     "tls": false
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "legacy-start": "react-app-rewired --openssl-legacy-provider start",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
@@ -36,6 +39,7 @@
     "eject": "react-app-rewired eject"
   },
   "author": "Issa Beekun",
+  "homepage": "https://flyerfye.github.io/edgy-polygon-react",
   "license": "ISC",
   "eslintConfig": {
     "extends": [
@@ -54,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.0.0"
   }
 }

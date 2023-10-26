@@ -1,5 +1,5 @@
-.main:after {
-    content: "";
-    display: table;
-    clear: both;
-  }
+.controlsPanelGrid {
+  padding: 10px;
+  justify-content: center;
+  display: flex;
+}

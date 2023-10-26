@@ -1,6 +1,5 @@
-.main {
-  flex: 1;
-  padding: 10px;
+.div {
+  padding: 10px 5px;
   display: flex;
   flex-direction: column;
   gap: 10px;

@@ -1,4 +1,5 @@
 .main {
-    float: left;
-    width: 33.33%;
-  }
+  font: inherit;
+  float: left;
+  width: 50%;
+}

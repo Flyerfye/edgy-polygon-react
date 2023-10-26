@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import classes from './ImageCanvas.module.css';
+import classes from "./ImageCanvas.module.css";
 
 export default function ImageCanvas(props: any) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -13,12 +13,12 @@ export default function ImageCanvas(props: any) {
     canvas!.width = props.imgElem.width * props.resizeFactor;
     canvas!.height = props.imgElem.height * props.resizeFactor;
     context!.drawImage(props.imgElem, 0, 0, canvas!.width, canvas!.height);
-
   }, [props.imgElem, props.resizeFactor]);
   return (
-    
-    <div className={classes.div} id="imageCanvasDiv">
-      <canvas className={classes.canvas} id="imageCanvasCanvas" ref={canvasRef}></canvas>
-    </div>
+    <canvas
+      className={classes.canvas}
+      id="imageCanvasCanvas"
+      ref={canvasRef}
+    ></canvas>
   );
 }

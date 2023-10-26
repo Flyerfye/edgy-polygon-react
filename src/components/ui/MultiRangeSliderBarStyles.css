@@ -1,0 +1,57 @@
+.rc-slider {
+  height: 20px; /* Set the height of the slider */
+  padding: 10px 0px;
+  width: 80%;
+}
+
+.custom-slider-container {
+  display: flex;
+  padding: 0px 10px;
+}
+
+.slider-label-container {
+  text-align: center;
+}
+
+.slider-value {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.sliderTitleLabel {
+  padding: 5px 10px;
+}
+
+/* Tooltip trigger element */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  /* Add an underline or border for the tooltip trigger */
+  /* border-bottom: 1px dotted black;  */
+  cursor: pointer;
+}
+
+/* Tooltip content (hidden by default) */
+.tooltip-text {
+  visibility: hidden;
+  width: 150px;
+  background-color: #333;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the tooltip content on hover */
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}

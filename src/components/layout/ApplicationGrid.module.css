@@ -1,0 +1,36 @@
+* {
+  font-family: sans-serif;
+}
+
+.pointsInfoContainer {
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* Center the table within its container */
+table {
+  margin: 0 auto;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid;
+  margin: 0 1rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: darkcyan;
+}
+
+.buttonLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}

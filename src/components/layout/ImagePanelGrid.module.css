@@ -1,9 +1,9 @@
 .main {
   display: flex;
-  /* padding: 10px; */
+  padding: 10px;
   justify-content: center;
   align-items: center;
   min-width: 75vh;
-  background-color: #f0f0f0;
+  background-color: #9cc3ff;
   border-radius: 12px;
 }

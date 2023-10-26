@@ -1,7 +1,6 @@
-import ApplicationGrid from './components/layout/ApplicationGrid';
+import ApplicationGrid from "./components/layout/ApplicationGrid";
 
-
-function App() {  
+function App() {
   return (
     <div>
       <ApplicationGrid />

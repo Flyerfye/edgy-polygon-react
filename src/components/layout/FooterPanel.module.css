@@ -1,0 +1,18 @@
+.divContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.main {
+  text-align: center;
+  background-color: #cacaca;
+  border-radius: 12px;
+  width: 60%;
+  padding: 0.5rem;
+}
+
+.main td {
+  width: 33%;
+}

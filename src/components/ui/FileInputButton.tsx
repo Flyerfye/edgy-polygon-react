@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import classes from "./FileInputButton.module.css";
 
 export default function FileInputButton(props: any) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -18,14 +19,16 @@ export default function FileInputButton(props: any) {
   };
 
   return (
-    <div>
+    <div className={classes.main}>
       <input
         type="file"
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileInputChange}
       />
-      <button onClick={handleClick}>Choose File</button>
+      <button className={props.className} onClick={handleClick}>
+        Choose File
+      </button>
     </div>
   );
 }
