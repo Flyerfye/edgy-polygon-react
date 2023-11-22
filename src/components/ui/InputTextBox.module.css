@@ -1,0 +1,8 @@
+.inputTextBox {
+  padding: 10px;
+  border: 2px solid #333;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  text-align: right;
+}

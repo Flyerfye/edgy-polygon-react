@@ -1,0 +1,48 @@
+.saveImageModal {
+  position: fixed; /* Fixed position to stay centered even when scrolling */
+  top: 50%; /* Place the top edge of the modal at 50% from the top */
+  left: 50%; /* Place the left edge of the modal at 50% from the left */
+  transform: translate(
+    -50%,
+    -50%
+  ); /* Center the modal both horizontally and vertically */
+  background-color: white;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 3;
+  width: 30rem;
+  text-align: center;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  border: 1px solid;
+  margin: 0 1rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: darkcyan;
+}
+
+h1 {
+  margin-top: 1vh; /* Adjust the margin to reduce the space after the h1 tag*/
+  margin-bottom: 2vh; /* Adjust the margin to reduce the space after the h1 tag*/
+}
+
+h2 {
+  text-align: left;
+  margin-bottom: 1vh; /* Adjust the margin to reduce the space after the h2 tag*/
+}
+
+p {
+  text-align: left;
+}
+
+ol {
+  margin-top: 1vh; /* Adjust the margin to reduce the space before the p tag*/
+  text-align: left;
+}

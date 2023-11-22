@@ -1,6 +1,10 @@
 import classes from "./AboutMeModal.module.css";
 
-export default function AboutMeModal(props) {
+interface AboutMeModalProps {
+  closeFn: any;
+}
+
+export default function AboutMeModal(props: AboutMeModalProps) {
   return (
     <div className={classes.aboutMeModal}>
       <h1>Hello!</h1>

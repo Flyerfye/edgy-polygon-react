@@ -1,5 +1,9 @@
 import classes from "./Backdrop.module.css";
 
-export default function Backdrop(props) {
+interface BackdropProps {
+  onClick: any;
+}
+
+export default function Backdrop(props: BackdropProps) {
   return <div className={classes.backdrop} onClick={props.onClick}></div>;
 }

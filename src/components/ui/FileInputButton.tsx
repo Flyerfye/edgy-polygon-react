@@ -1,14 +1,19 @@
 import React, { useRef } from "react";
 import classes from "./FileInputButton.module.css";
 
-export default function FileInputButton(props: any) {
+interface FileInputButtonProps {
+  className: string;
+  fileInputFn: any;
+}
+
+export default function FileInputButton(props: FileInputButtonProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const handleFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       const inputFile = event.target.files[0];
-      props.fileFn(inputFile);
+      props.fileInputFn(inputFile);
     }
   };
 
@@ -19,7 +24,7 @@ export default function FileInputButton(props: any) {
   };
 
   return (
-    <div className={classes.main}>
+    <div className={classes.fileInputButton}>
       <input
         type="file"
         ref={fileInputRef}

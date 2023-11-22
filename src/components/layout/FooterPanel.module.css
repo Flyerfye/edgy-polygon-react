@@ -5,7 +5,7 @@
   padding: 0.5rem;
 }
 
-.main {
+.footerPanel {
   text-align: center;
   background-color: #cacaca;
   border-radius: 12px;
@@ -13,6 +13,6 @@
   padding: 0.5rem;
 }
 
-.main td {
+.footerPanel td {
   width: 33%;
 }

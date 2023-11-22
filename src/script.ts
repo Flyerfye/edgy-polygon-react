@@ -35,12 +35,6 @@ function processImageCallback(props: any): any {
   if (+props.sparseness > 1)
     cvDst = generateSparseMat(cvDst, +props.sparseness);
 
-  // console.log(
-  //   "Resizing",
-  //   props.imgElem.width,
-  //   props.imgElem.height,
-  //   props.edgeResizeFactor
-  // );
   let cvDst_resized = new cv.Mat();
   let dsize = new cv.Size(
     props.imgElem.width * props.edgeResizeFactor,
@@ -70,7 +64,6 @@ function processImageCallback(props: any): any {
       } else {
         const polyCanvasDiv = document.getElementById("polyCanvasDiv");
         polyCanvasDiv!.innerHTML = "";
-        // console.log("Polygon resize", props.polygonResizeFactor);
         // resizeTo(canvas, props.polygonResizeFactor);
         polyCanvasDiv!.appendChild(canvas);
       }

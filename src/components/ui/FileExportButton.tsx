@@ -1,10 +1,16 @@
-export default function FileExportButton(props: any) {
+interface FileExportButtonProps {
+  className: string;
+  clickFn: any;
+}
+
+export default function FileExportButton(props: FileExportButtonProps) {
   const handleClick = () => {
-    props.rerenderFn(props.rerenderId, true);
     props.clickFn();
   };
 
   return (
-    <button className={props.className} onClick={handleClick}>Save Image</button>
+    <button className={props.className} onClick={handleClick}>
+      Save Image
+    </button>
   );
 }

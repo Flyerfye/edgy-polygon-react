@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-export default function ToggleButton(props: any) {
+interface ToggleButtonProps {
+  rerenderId: string;
+  textA: string;
+  textB: string;
+  className: string;
+  rerenderFn: any;
+}
+
+export default function ToggleButton(props: ToggleButtonProps) {
   const [showTextA, setShowTextA] = useState<boolean>(true);
   const TextA = props.textA;
   const TextB = props.textB;

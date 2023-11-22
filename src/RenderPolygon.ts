@@ -26,10 +26,7 @@ export function RenderPolygonFn(opts: any) {
 
     outputCanvas.id = "polyCanvas";
 
-    //when generating the polygon image for saving, we don't want any resizing based on viewport size
     if (saveImage) {
-      imageWidth = +image.width;
-      imageHeight = +image.height;
       outputCanvas.id = "hiddenPolyCanvas";
     }
 
@@ -38,6 +35,7 @@ export function RenderPolygonFn(opts: any) {
 
     canvas.width = imageWidth;
     canvas.height = imageHeight;
+    
     canvas!
       .getContext("2d", { willReadFrequently: true })!
       .drawImage(image, 0, 0, imageWidth, imageHeight);

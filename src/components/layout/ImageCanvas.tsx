@@ -1,7 +1,12 @@
 import { useRef, useEffect } from "react";
 import classes from "./ImageCanvas.module.css";
 
-export default function ImageCanvas(props: any) {
+interface ImageCanvasProps {
+  imgElem: HTMLImageElement | null;
+  resizeFactor: number;
+}
+
+export default function ImageCanvas(props: ImageCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -16,8 +21,8 @@ export default function ImageCanvas(props: any) {
   }, [props.imgElem, props.resizeFactor]);
   return (
     <canvas
-      className={classes.canvas}
-      id="imageCanvasCanvas"
+      className={classes.imageCanvas}
+      id="imageCanvas"
       ref={canvasRef}
     ></canvas>
   );

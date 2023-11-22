@@ -1,3 +1,3 @@
-export default function EdgeCanvas(props: any) {
+export default function EdgeCanvas() {
   return <canvas id="edgeCanvas" />;
 }

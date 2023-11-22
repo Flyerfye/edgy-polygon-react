@@ -2,9 +2,13 @@ import DefaultFileButton from "../ui/DefaultFileButton";
 import FileInputButton from "../ui/FileInputButton";
 import classes from "./IntroModal.module.css";
 
-export default function IntroModal(props) {
+interface IntroModalProps {
+  closeAndUploadImgFn: any;
+}
+
+export default function IntroModal(props: IntroModalProps) {
   return (
-    <div className={classes.introModal}>
+    <div className={classes.introModal} data-testid='intro-modal'>
       <h1>Welcome!</h1>
       <p>
         This app is a project I am using to teach myself about Typescript and
@@ -38,13 +42,14 @@ export default function IntroModal(props) {
       </ol>
       <FileInputButton
         className={classes.button}
-        fileFn={props.closeAndUploadImg}
+        fileInputFn={props.closeAndUploadImgFn}
       />
       <DefaultFileButton
         className={classes.button}
-        clickFn={props.closeAndUploadImg}
+        clickFn={props.closeAndUploadImgFn}
         buttonTxt="Show Me The Bird!"
         inputFile="media/Birb.jpg"
+        id="intro-modal-default-file-button"
       />
     </div>
   );
