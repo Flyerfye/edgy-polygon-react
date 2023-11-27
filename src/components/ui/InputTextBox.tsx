@@ -1,9 +1,10 @@
+import React from "react";
 import classes from "./InputTextBox.module.css";
 
 interface InputTextBoxProps {
   placeholderText: string;
   value: string;
-  onChangeFn: any;
+  onChangeFn: (event: unknown) => void;
 }
 
 export default function InputTextBox(props: InputTextBoxProps) {

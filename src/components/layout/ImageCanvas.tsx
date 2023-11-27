@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import classes from "./ImageCanvas.module.css";
 
 interface ImageCanvasProps {
@@ -13,11 +13,20 @@ export default function ImageCanvas(props: ImageCanvasProps) {
     if (!props.imgElem) return;
 
     const canvas = canvasRef.current;
-    const context = canvas!.getContext("2d");
+    
+    if (!canvas) {
+      throw new Error("Provided image element is not defined");
+    }
 
-    canvas!.width = props.imgElem.width * props.resizeFactor;
-    canvas!.height = props.imgElem.height * props.resizeFactor;
-    context!.drawImage(props.imgElem, 0, 0, canvas!.width, canvas!.height);
+    const canvasContext = canvas.getContext("2d");
+    
+    if (!canvasContext) {
+      throw new Error("Provided image element is not defined");
+    }
+
+    canvas.width = props.imgElem.width * props.resizeFactor;
+    canvas.height = props.imgElem.height * props.resizeFactor;
+    canvasContext.drawImage(props.imgElem, 0, 0, canvas.width, canvas.height);
   }, [props.imgElem, props.resizeFactor]);
   return (
     <canvas

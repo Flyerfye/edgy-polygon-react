@@ -1,9 +1,10 @@
+import React from "react";
 import DefaultFileButton from "../ui/DefaultFileButton";
 import FileInputButton from "../ui/FileInputButton";
 import classes from "./IntroModal.module.css";
 
 interface IntroModalProps {
-  closeAndUploadImgFn: any;
+  closeAndUploadImgFn: (file: File) => void;
 }
 
 export default function IntroModal(props: IntroModalProps) {

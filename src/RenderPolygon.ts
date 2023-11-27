@@ -1,28 +1,46 @@
-// @ts-ignore
 import Delaunay from "delaunay-fast";
 
-export function RenderPolygonFn(opts: any) {
-  opts.borderPoints = opts!.borderPoints! || defaults.borderPoints;
+interface RenderPolygonFnProps {
+  imgElem: HTMLImageElement | null;
+  polygonResizeFactor: number;
+  borderPoints: number;
+  colorSampRadius: number;
+  showPoints: boolean;
+  saveImage: boolean;
+  points: number[][];
+  onSuccess: (arg1: HTMLCanvasElement) => void;
+}
 
-  opts.showPoints = opts!.showPoints! || defaults.showPoints;
+export function RenderPolygonFn(opts: RenderPolygonFnProps) {
+  opts.borderPoints = opts?.borderPoints || defaults.borderPoints;
 
-  opts.colorSampRadius = opts!.colorSampRadius! || defaults.colorSampRadius;
+  opts.showPoints = opts?.showPoints || defaults.showPoints;
 
-  var canvas = polygonizeFromPts(opts.imgElem, opts.saveImage);
+  opts.colorSampRadius = opts?.colorSampRadius || defaults.colorSampRadius;
+
+  if (!opts.imgElem) {
+    throw new Error("Provided image element is not defined");
+  }
+  const canvas = polygonizeFromPts(opts.imgElem, opts.saveImage);
 
   if (opts.onSuccess) {
     opts.onSuccess(canvas);
   }
 
   function polygonizeFromPts(image: HTMLImageElement, saveImage: boolean) {
-    var outputCanvas: HTMLCanvasElement = document.createElement("canvas");
-    var ctx: CanvasRenderingContext2D = outputCanvas!.getContext("2d")!;
+    const outputCanvas: HTMLCanvasElement = document.createElement("canvas");
+    const tempCtx: CanvasRenderingContext2D | null = outputCanvas?.getContext("2d");
+    if (!tempCtx) {
+      throw new Error("Canvas rendering context cannot be null or undefined");
+    }
+    const ctx: CanvasRenderingContext2D = tempCtx;
 
-    var canvas = document.createElement("canvas");
-    var points = opts.points;
 
-    var imageWidth = +image.width * opts.polygonResizeFactor;
-    var imageHeight = +image.height * opts.polygonResizeFactor;
+    const canvas = document.createElement("canvas");
+    const points = opts.points;
+
+    const imageWidth = +image.width * opts.polygonResizeFactor;
+    const imageHeight = +image.height * opts.polygonResizeFactor;
 
     outputCanvas.id = "polyCanvas";
 
@@ -35,15 +53,14 @@ export function RenderPolygonFn(opts: any) {
 
     canvas.width = imageWidth;
     canvas.height = imageHeight;
-    
-    canvas!
-      .getContext("2d", { willReadFrequently: true })!
-      .drawImage(image, 0, 0, imageWidth, imageHeight);
+
+    const canvasContext = canvas.getContext("2d", { willReadFrequently: true });
+    canvasContext?.drawImage(image, 0, 0, imageWidth, imageHeight);
 
     //add bounding points for the edges
     //points added to the overall array are not referenced as x, y but rather as row, col which may seem inverted
     if (opts.borderPoints > 0) {
-      var points_i = points.length;
+      let points_i = points.length;
 
       // points in the 4 corners of the image
       points[points_i++] = [0, 0];
@@ -52,7 +69,7 @@ export function RenderPolygonFn(opts: any) {
       points[points_i++] = [imageHeight - 0, imageWidth - 0];
 
       // points along the edges
-      for (var i = 1; i < opts.borderPoints; i++) {
+      for (let i = 1; i < opts.borderPoints; i++) {
         points[points_i++] = [0, 0 + imageWidth / (i + 1)];
         points[points_i++] = [0 + imageHeight / (i + 1), 0];
         points[points_i++] = [imageHeight / (i + 1), imageWidth - 0];
@@ -60,11 +77,11 @@ export function RenderPolygonFn(opts: any) {
       }
     }
 
-    var indices = Delaunay.triangulate(points);
+    const indices = Delaunay.triangulate(points);
 
     //NOTE this operation is very resource hungry and blocks the single thread
-    for (var index = 0; index < indices.length; index += 3) {
-      var triangle = [
+    for (let index = 0; index < indices.length; index += 3) {
+      const triangle = [
         indices[index],
         indices[index + 1],
         indices[index + 2],
@@ -72,21 +89,21 @@ export function RenderPolygonFn(opts: any) {
         return [points[index][1], points[index][0]];
       });
 
-      var centerX = Math.round(
+      const centerX = Math.round(
         (triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3
       );
-      var centerY = Math.round(
+      const centerY = Math.round(
         (triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3
       );
 
-      var colorArray: Uint8ClampedArray[] = [];
+      const colorArray: Uint8ClampedArray[] = [];
 
       // if any smoothing is to be performed, queue up pixels to be smoothed in square selection around the center pixel
       if (opts.colorSampRadius > 0) {
-        var smoothDist = +opts.colorSampRadius;
+        const smoothDist = +opts.colorSampRadius;
 
         for (
-          var x_smooth = 0 > centerX - smoothDist ? 0 : centerX - smoothDist;
+          let x_smooth = 0 > centerX - smoothDist ? 0 : centerX - smoothDist;
           x_smooth <
           (imageWidth < centerX + smoothDist
             ? imageWidth
@@ -94,7 +111,7 @@ export function RenderPolygonFn(opts: any) {
           x_smooth++
         ) {
           for (
-            var y_smooth = 0 > centerY - smoothDist ? 0 : centerY - smoothDist;
+            let y_smooth = 0 > centerY - smoothDist ? 0 : centerY - smoothDist;
             y_smooth <
             (imageHeight < centerY + smoothDist
               ? imageHeight
@@ -115,15 +132,15 @@ export function RenderPolygonFn(opts: any) {
       drawTriangle(triangle, averagePixels(colorArray), ctx);
 
       // //useful for seeing where the centroid of the delaunay points are placed
-      // var tempfillStyle = ctx.fillStyle;
+      // let tempfillStyle = ctx.fillStyle;
       // ctx.fillStyle = "black";
       // ctx.fillRect(centerX, centerY, 1, 1);
       // ctx.fillStyle = tempfillStyle;
     }
 
     if (opts.showPoints) {
-      for (var ptsIndex = 0; ptsIndex < indices.length; ptsIndex += 3) {
-        triangle = [
+      for (let ptsIndex = 0; ptsIndex < indices.length; ptsIndex += 3) {
+        const triangle = [
           indices[ptsIndex],
           indices[ptsIndex + 1],
           indices[ptsIndex + 2],
@@ -139,14 +156,14 @@ export function RenderPolygonFn(opts: any) {
   }
 }
 
-var defaults = {
+const defaults = {
   borderPoints: 1,
   showPoints: false,
   colorSampRadius: 0,
 };
 
 function componentToHex(c: number): string {
-  var hex = c.toString(16);
+  const hex = c.toString(16);
   if (hex.length === 1) {
     return "0" + hex;
   }
@@ -169,7 +186,11 @@ function getPixel(
   y = Math.floor(Math.abs(y));
   // check if the pixel is within image bounds before querying/returning it
   if (x >= 0 && x <= maxWidth && y >= 0 && y <= maxHeight) {
-    return canvas!.getContext("2d")!.getImageData(x, y, 1, 1).data;
+    const canvasContext = canvas.getContext("2d");
+    if (!canvasContext) {
+      throw new Error("Provided image element is not defined");
+    }
+    return canvasContext.getImageData(x, y, 1, 1).data;
   } else {
     // if the pixel is outside of bounds, return an invalid color
     console.log("Pixel out of bounds: (" + x + "," + y + ")");
@@ -178,13 +199,13 @@ function getPixel(
 }
 
 function averagePixels(pixels: Uint8ClampedArray[]): string {
-  var red = 0;
-  var green = 0;
-  var blue = 0;
-  var count = 0;
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+  let count = 0;
 
   //iterate through each pixel
-  for (var i = 0; i < pixels.length; i++) {
+  for (let i = 0; i < pixels.length; i++) {
     // if the pixel is not transparent, use it for determining average color
     if (pixels[i][3] !== 0) {
       red += pixels[i][0];
@@ -218,7 +239,7 @@ function drawTriangle(
 }
 
 function drawEndPoints(triangle: number[][], ctx: CanvasRenderingContext2D) {
-  var tempfillStyle = ctx.fillStyle;
+  const tempfillStyle = ctx.fillStyle;
   ctx.fillStyle = "white";
   ctx.fillRect(triangle[0][1], triangle[0][0], 1, 1);
   ctx.fillRect(triangle[1][1], triangle[1][0], 1, 1);

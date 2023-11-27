@@ -3,7 +3,7 @@ import classes from "./FileInputButton.module.css";
 
 interface FileInputButtonProps {
   className: string;
-  fileInputFn: any;
+  fileInputFn: (file: File) => void;
 }
 
 export default function FileInputButton(props: FileInputButtonProps) {

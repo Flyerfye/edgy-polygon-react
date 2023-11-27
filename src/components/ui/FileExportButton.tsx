@@ -1,6 +1,9 @@
+import React from "react";
+
 interface FileExportButtonProps {
   className: string;
-  clickFn: any;
+  id:string;
+  clickFn: () => void;
 }
 
 export default function FileExportButton(props: FileExportButtonProps) {
@@ -9,7 +12,7 @@ export default function FileExportButton(props: FileExportButtonProps) {
   };
 
   return (
-    <button className={props.className} onClick={handleClick}>
+    <button className={props.className} id={props.id} data-testid={props.id} onClick={handleClick}>
       Save Image
     </button>
   );

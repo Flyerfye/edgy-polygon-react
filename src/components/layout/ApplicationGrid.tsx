@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Backdrop from "./Backdrop";
 import IntroModal from "./IntroModal";
 import ImagePanelGrid from "./ImagePanelGrid";
@@ -22,7 +22,7 @@ import FooterPanel from "./FooterPanel";
 import AboutMeModal from "./AboutMeModal";
 import SaveImageModal from "./SaveImageModal";
 
-export default function ApplicationGrid(props: any) {
+export default function ApplicationGrid() {
   const ID_MIN_THRESHOLD = "edge-min-threshold";
   const ID_MAX_THRESHOLD = "edge-max-threshold";
   const ID_MIN_MAX_THRESHOLD = "edge-min-max-threshold";
@@ -82,7 +82,9 @@ export default function ApplicationGrid(props: any) {
   };
 
   // Used when component requires a function as part of the defined interface for input arguments
-  const emptyFunction = () => {};
+  const emptyFunction = () => {
+    //
+  };
 
   const closeIntroAndUploadSourceImg = (file: File) => {
     setIntroModalOpen(false);
@@ -115,7 +117,11 @@ export default function ApplicationGrid(props: any) {
   };
 
   const getCurrentImageDim = () => {
-    return [sourceImg?.width, sourceImg?.height];
+    if(!sourceImg) {
+      return [0, 0];
+    } else {
+      return [sourceImg.width, sourceImg.height];
+    }
   };
 
   const downloadPolyImg = (fileName: string) => {
@@ -136,8 +142,8 @@ export default function ApplicationGrid(props: any) {
 
   const updatePanelLayout = (imgWidth, imgHeight) => {
     const goldenRatio = 1.618;
-    var imageGridWidth = WINDOW_SIZE.width;
-    var imageGridHeight = WINDOW_SIZE.height;
+    let imageGridWidth = WINDOW_SIZE.width;
+    let imageGridHeight = WINDOW_SIZE.height;
 
     if (imageGridWidth < 300) {
       imageGridWidth = 300;
@@ -154,7 +160,7 @@ export default function ApplicationGrid(props: any) {
 
     // if ratio of image width:height > that of main panel, the width is the limiting factor
     // 30 pixels adjustment accounts for the horizontal padding of the elements
-    let imageRatio = imgWidth / imgHeight;
+    const imageRatio = imgWidth / imgHeight;
     let tempMainResizeFactor = 1;
     if (imageRatio >= 1) {
       tempMainResizeFactor = (imageGridHeight - 30) / imgWidth;
@@ -164,7 +170,7 @@ export default function ApplicationGrid(props: any) {
 
     // if ratio of image width:height > that of side panel, the width is the limiting factor
     // the 5px reduction in side image height is to adjust for the 10px gap between those two images
-    let sidePanelRatio =
+    const sidePanelRatio =
       (imageGridWidth - imageGridHeight) / (imageGridHeight / 2 - 5);
     let tempSideResizeFactor = 1;
     if (imageRatio >= sidePanelRatio) {
@@ -174,7 +180,7 @@ export default function ApplicationGrid(props: any) {
     }
 
     // setMainResizeFactor((prevMainResizeFactor) => tempMainResizeFactor);
-    setSideResizeFactor((prevSideResizeFactor) => tempSideResizeFactor);
+    setSideResizeFactor(() => tempSideResizeFactor);
 
     return {
       mainResizeValue: tempMainResizeFactor,
@@ -191,7 +197,7 @@ export default function ApplicationGrid(props: any) {
       image.id = "inputImage";
       image.onload = () => {
         setSourceImg(image);
-        let { mainResizeValue, sideResizeValue } = updatePanelLayout(
+        const { mainResizeValue, sideResizeValue } = updatePanelLayout(
           image.width,
           image.height
         );
@@ -205,8 +211,9 @@ export default function ApplicationGrid(props: any) {
           pointSpacing: pointSpacing,
           sparseness: sparseness,
           borderPoints: NUM_BORDER_POINTS,
-          smoothColors: colorSampRadius,
+          colorSampRadius: colorSampRadius,
           showPoints: showTrianglePoints,
+          saveImage: false,
           pointsFn: setPointsDetected,
         });
       };
@@ -220,16 +227,16 @@ export default function ApplicationGrid(props: any) {
 
   const reprocessImage = (
     paramName: string,
-    paramValue: number | [number, number] | boolean
+    paramValue: number | number[] | boolean
   ) => {
-    let { mainResizeValue, sideResizeValue } = updatePanelLayout(
+    const { mainResizeValue, sideResizeValue } = updatePanelLayout(
       sourceImg?.width,
       sourceImg?.height
     );
 
     // since state updates async, it is quicker to make the call to process image
     // using a prop containing the updated param value directly
-    let reprocessProps = {
+    const reprocessProps = {
       imgElem: sourceImg,
       edgeResizeFactor: sideResizeValue,
       polygonResizeFactor: mainResizeValue,
@@ -317,8 +324,6 @@ export default function ApplicationGrid(props: any) {
       {(introModalOpen || aboutMeModalOpen) && (
         <Backdrop onClick={emptyFunction} />
       )}
-
-      {aboutMeModalOpen && <AboutMeModal closeFn={closeAboutMe} />}
       <main className={classes.main}>
         <HeaderPanel>
           <FileInputButton
@@ -334,6 +339,7 @@ export default function ApplicationGrid(props: any) {
           />
           <FileExportButton
             className={classes.button}
+            id="application-grid-save-button"
             clickFn={openSaveImageModal}
           />
         </HeaderPanel>
@@ -442,7 +448,7 @@ export default function ApplicationGrid(props: any) {
                 <td className="link">
                   {/* It is convention not to use a href tags when there is no navigation to another page
                 Using a disguised button here instead */}
-                  <button className={classes.buttonLink} onClick={openAboutMe}>
+                  <button className={classes.buttonLink} data-testid="application-grid-about-me-button" onClick={openAboutMe}>
                     About Me
                   </button>
                 </td>

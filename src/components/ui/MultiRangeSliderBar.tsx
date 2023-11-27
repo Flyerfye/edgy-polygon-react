@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import "./MultiRangeSliderBarStyles.css";
@@ -11,7 +11,7 @@ interface MultiRangeSliderBarProps {
   max: number;
   customMarks: { [key: number]: string };
   initialValues: number[];
-  rerenderFn: any;
+  rerenderFn: (imageParamId: string, imageParamValue: number | number[] | boolean) => void; 
 }
 
 export default function MultiRangeSliderBar(props: MultiRangeSliderBarProps) {
@@ -42,7 +42,7 @@ export default function MultiRangeSliderBar(props: MultiRangeSliderBarProps) {
                 max={props.max}
                 value={values}
                 included={true}
-                onChange={handleSliderChange as any}
+                onChange={handleSliderChange as ((value: number | number[]) => void) | undefined}
                 pushable={true}
                 marks={props.customMarks}
               />

@@ -1,15 +1,17 @@
+import React from "react";
+
 interface DefaultFileButtonProps {
   className: string;
   buttonTxt: string;
   inputFile: string;
   id:string;
-  clickFn: any;
+  clickFn: (file: File) => void;
 }
 
 export default function DefaultFileButton(props: DefaultFileButtonProps) {
   const handleClick = () => {
     //generate blob to be parsed by reader.readAsDataURL() later
-    var request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.open("GET", props.inputFile, true);
     request.responseType = "blob";
 

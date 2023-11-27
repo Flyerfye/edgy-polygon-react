@@ -1,11 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import classes from "./SaveImageModal.module.css";
 import InputTextBox from "../ui/InputTextBox";
 
 interface SaveImageModalProps {
   defaultFilename: string;
-  imageDimFn: any;
-  closeFn: any;
+  imageDimFn: () => (number)[];
+  closeFn: (resizeFactor: number, fileName: string) => void;
 }
 
 export default function SaveImageModal(props: SaveImageModalProps) {
@@ -26,7 +26,7 @@ export default function SaveImageModal(props: SaveImageModalProps) {
   };
 
   return (
-    <div className={classes.saveImageModal}>
+    <div className={classes.saveImageModal} data-testid='save-modal'>
       <h1>Save Image</h1>
       {/* specify the % increase or the final resolution */}
       {/* specify the output file name */}
@@ -55,7 +55,7 @@ export default function SaveImageModal(props: SaveImageModalProps) {
         <br />
       </p>
 
-      <button className={classes.button} onClick={handleSaveButton}>
+      <button className={classes.button} data-testid="save-image-modal-save-button" onClick={handleSaveButton}>
         Save
       </button>
     </div>

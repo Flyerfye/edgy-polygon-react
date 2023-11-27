@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "react-app/jest",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended"
+  ],
+  "ignorePatterns": ["jest-stare/", "node_modules/", "opencv.js", "build/"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "plugins": ["@typescript-eslint", "react"],
+  "rules": {},
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

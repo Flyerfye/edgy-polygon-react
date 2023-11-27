@@ -1,11 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface ToggleButtonProps {
   rerenderId: string;
   textA: string;
   textB: string;
   className: string;
-  rerenderFn: any;
+  rerenderFn: (imageParamId: string, imageParamValue: number | number[] | boolean) => void; 
 }
 
 export default function ToggleButton(props: ToggleButtonProps) {

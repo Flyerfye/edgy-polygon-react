@@ -1,3 +1,4 @@
+import React from "react"
 import classes from "./PolyCanvas.module.css";
 
 export default function PolyCanvas() {

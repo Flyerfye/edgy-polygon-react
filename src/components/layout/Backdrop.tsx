@@ -1,7 +1,8 @@
+import React from "react";
 import classes from "./Backdrop.module.css";
 
 interface BackdropProps {
-  onClick: any;
+  onClick: () => void;
 }
 
 export default function Backdrop(props: BackdropProps) {
