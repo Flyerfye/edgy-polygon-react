@@ -12,18 +12,8 @@ export default function IntroModal(props: IntroModalProps) {
     <div className={classes.introModal} data-testid='intro-modal'>
       <h1>Welcome!</h1>
       <p>
-        This app is a project I am using to teach myself about Typescript and
-        React. <br />
-        <br />I hand-created some{" "}
-        <a href="https://twitter.com/goodflyerfye/status/991529959167483904">
-          low-poly art
-        </a>{" "}
-        a while ago and wanted to make a way to do it dynamically.
-        <br />
-        <br />
-        With the help of some existing{" "}
-        <a href="https://github.com/evansque/polygonize">good examples</a>, I
-        was able to build out the image processing/mathy bits and make this app.
+        This app is a project I used to learn about Typescript and
+        React while also having fun pursuing my artistic interests.
       </p>
 
       <h2>Quick Start:</h2>

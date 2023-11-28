@@ -39,7 +39,7 @@ export default function ApplicationGrid() {
   };
 
   const [introModalOpen, setIntroModalOpen] = useState(true);
-  const [aboutMeModalOpen, setAboutMeModalOpen] = useState(false);
+  const [aboutMeModalOpen, setAboutMeModalOpen] = useState(true);
   const [saveImageModalOpen, setSaveImageModalOpen] = useState(false);
 
   const [sideResizeFactor, setSideResizeFactor] = useState(0.1);
