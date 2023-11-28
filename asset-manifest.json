@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/edgy-polygon-react/static/css/main.c45e398f.css",
-    "main.js": "/edgy-polygon-react/static/js/main.03132e08.js",
+    "main.css": "/edgy-polygon-react/static/css/main.63d27e44.css",
+    "main.js": "/edgy-polygon-react/static/js/main.3e042fd8.js",
     "static/media/Birb.jpg": "/edgy-polygon-react/static/media/Birb.5d307f55da9824d6a20f.jpg",
     "index.html": "/edgy-polygon-react/index.html",
-    "main.c45e398f.css.map": "/edgy-polygon-react/static/css/main.c45e398f.css.map",
-    "main.03132e08.js.map": "/edgy-polygon-react/static/js/main.03132e08.js.map"
+    "main.63d27e44.css.map": "/edgy-polygon-react/static/css/main.63d27e44.css.map",
+    "main.3e042fd8.js.map": "/edgy-polygon-react/static/js/main.3e042fd8.js.map"
   },
   "entrypoints": [
-    "static/css/main.c45e398f.css",
-    "static/js/main.03132e08.js"
+    "static/css/main.63d27e44.css",
+    "static/js/main.3e042fd8.js"
   ]
 }
