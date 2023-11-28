@@ -34,6 +34,7 @@ describe("Snapshot test", () => {
     "#root > div > div > main > main.ControlsPanelGrid_controlsPanelGrid__8LrXa > main:nth-child(1) > div:nth-child(2) > table > tbody > tr > td:nth-child(2) > div > div.rc-slider-handle.rc-slider-handle-1";
   const pointSpaceSelectorHandle =
     "#root > div > div > main > main.ControlsPanelGrid_controlsPanelGrid__8LrXa > main:nth-child(2) > div:nth-child(1) > table > tbody > tr > td:nth-child(2) > div > div.rc-slider-handle.rc-slider-handle-1";
+  const test_snapshot_path = "src/tests/e2e/__image_snapshots__/";
 
   beforeEach(async () => {
     browser = await puppeteer.launch(puppeteerOptions);
@@ -62,7 +63,10 @@ describe("Snapshot test", () => {
         if (error instanceof Error) {
           console.error("An unexpected error occurred:", error.message);
         } else {
-          console.error("An unexpected error occurred which is not of type error:", error);
+          console.error(
+            "An unexpected error occurred which is not of type error:",
+            error
+          );
         }
       }
       await browser.close();
@@ -127,18 +131,25 @@ describe("Snapshot test", () => {
   it(`renders bird image on canvases and compares screenshots`, async () => {
     await page.waitForSelector(polyCanvasSelector);
     const polyCanvasElement = await page.$(polyCanvasSelector);
-    const polyImage = await polyCanvasElement?.screenshot({ fullPage: false });
+    const polyImage = await polyCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-render-bird-polygon-image.png`,
+    });
     expect(polyImage).toMatchImageSnapshot(snapshotConfig);
 
     await page.waitForSelector(edgeCanvasSelector);
     const edgeCanvasElement = await page.$(edgeCanvasSelector);
-    const edgeImage = await edgeCanvasElement?.screenshot({ fullPage: false });
+    const edgeImage = await edgeCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-render-bird-edge-image.png`,
+    });
     expect(edgeImage).toMatchImageSnapshot(snapshotConfig);
 
     await page.waitForSelector(imageCanvasSelector);
     const imageCanvasElement = await page.$(imageCanvasSelector);
     const sourceImage = await imageCanvasElement?.screenshot({
       fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-render-bird-source-image.png`,
     });
     expect(sourceImage).toMatchImageSnapshot(snapshotConfig);
   });
@@ -149,20 +160,32 @@ describe("Snapshot test", () => {
 
     await page.waitForSelector(polyCanvasSelector);
     let polyCanvasElement = await page.$(polyCanvasSelector);
-    let polyImage = await polyCanvasElement?.screenshot({ fullPage: false });
+    let polyImage = await polyCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-minmax-max-polygon-image.png`,
+    });
     expect(polyImage).toMatchImageSnapshot(snapshotConfig);
 
-    const pageImageMaxSlider = await page.screenshot({ fullPage: true });
+    const pageImageMaxSlider = await page.screenshot({
+      fullPage: true,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-minmax-max-ui-image.png`,
+    });
     expect(pageImageMaxSlider).toMatchImageSnapshot(snapshotConfig);
 
     await moveSliderWBox(minSelectorHandle, minmaxSelectorRail, -15);
 
     await page.waitForSelector(polyCanvasSelector);
     polyCanvasElement = await page.$(polyCanvasSelector);
-    polyImage = await polyCanvasElement?.screenshot({ fullPage: false });
+    polyImage = await polyCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-minmax-min-polygon-image.png`,
+    });
     expect(polyImage).toMatchImageSnapshot(snapshotConfig);
 
-    const pageImageMinSlider = await page.screenshot({ fullPage: true });
+    const pageImageMinSlider = await page.screenshot({
+      fullPage: true,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-minmax-min-ui-image.png`,
+    });
     expect(pageImageMinSlider).toMatchImageSnapshot(snapshotConfig);
   }, 10000);
 
@@ -176,10 +199,16 @@ describe("Snapshot test", () => {
 
     await page.waitForSelector(polyCanvasSelector);
     const polyCanvasElement = await page.$(polyCanvasSelector);
-    const polyImage = await polyCanvasElement?.screenshot({ fullPage: false });
+    const polyImage = await polyCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-color-sample-polygon-image.png`,
+    });
     expect(polyImage).toMatchImageSnapshot(snapshotConfig);
 
-    const pageImage = await page.screenshot({ fullPage: true });
+    const pageImage = await page.screenshot({
+      fullPage: true,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-color-sample-ui-image.png`,
+    });
     expect(pageImage).toMatchImageSnapshot(snapshotConfig);
   }, 10000);
 
@@ -189,10 +218,16 @@ describe("Snapshot test", () => {
 
     await page.waitForSelector(polyCanvasSelector);
     const polyCanvasElement = await page.$(polyCanvasSelector);
-    const polyImage = await polyCanvasElement?.screenshot({ fullPage: false });
+    const polyImage = await polyCanvasElement?.screenshot({
+      fullPage: false,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-point-spacing-polygon-image.png`,
+    });
     expect(polyImage).toMatchImageSnapshot(snapshotConfig);
 
-    const pageImage = await page.screenshot({ fullPage: true });
+    const pageImage = await page.screenshot({
+      fullPage: true,
+      path: `${test_snapshot_path}/application-grid-e2e-test-modify-point-spacing-ui-image.png`,
+    });
     expect(pageImage).toMatchImageSnapshot(snapshotConfig);
   }, 10000);
 });

@@ -22,17 +22,13 @@
     "tls": false
   },
   "scripts": {
-    "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "legacy-start": "react-app-rewired --openssl-legacy-provider start",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "test:unit": "react-app-rewired test ./src/tests/unit",
     "test:e2e": "react-app-rewired test ./src/tests/e2e",
-    "test:e2eServer": "set PORT=10002&&react-app-rewired start",
-    "test:e2eupdate": "jest --updateSnapshot --config=./tests/e2e/jest.config.js",
-    "eject": "react-app-rewired eject"
+    "test:e2eServer": "set PORT=10002&&react-app-rewired start"
   },
   "author": "Issa Beekun",
   "homepage": "https://flyerfye.github.io/edgy-polygon-react/",

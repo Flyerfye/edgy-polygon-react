@@ -49,7 +49,6 @@ export default function IntroModal(props: IntroModalProps) {
         className={classes.button}
         clickFn={props.closeAndUploadImgFn}
         buttonTxt="Show Me The Bird!"
-        inputFile="media/Birb.jpg"
         id="intro-modal-default-file-button"
       />
     </div>

@@ -334,7 +334,6 @@ export default function ApplicationGrid() {
             className={classes.button}
             clickFn={updateSourceImg}
             buttonTxt="Show Me The Bird!"
-            inputFile="media/Birb.jpg"
             id ="application-grid-default-file-button"
           />
           <FileExportButton
