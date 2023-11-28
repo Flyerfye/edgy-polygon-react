@@ -27,11 +27,14 @@ export default function SaveImageModal(props: SaveImageModalProps) {
 
   return (
     <div className={classes.saveImageModal} data-testid='save-modal'>
-      <h1>Save Image</h1>
+      <h1 className={classes.h1}>Save Image</h1>
       {/* specify the % increase or the final resolution */}
       {/* specify the output file name */}
-      <p>
-        Set the name and dimensions of the output image before saving. <br />
+      <p className={classes.p}>
+        Set the name and dimensions of the output image before saving: <br />
+      </p>
+      
+      <p className={classes.p}>
         <InputTextBox
           placeholderText="Enter output file name"
           value={fileName}
@@ -39,10 +42,8 @@ export default function SaveImageModal(props: SaveImageModalProps) {
         />
         .png
       </p>
-      <br />
-      <h2>Output Image Resolution</h2>
 
-      <p>
+      <p className={classes.p}>
         <input
           type="number"
           value={resizeFactor}
@@ -50,8 +51,8 @@ export default function SaveImageModal(props: SaveImageModalProps) {
           min={0} // Optional: Minimum value
           max={500} // Optional: Maximum value
         />
-        % {(imageDim[0] * resizeFactor) / 100} x{" "}
-        {(imageDim[1] * resizeFactor) / 100} pixels
+        % &#91;{(imageDim[0] * resizeFactor) / 100} x{" "}
+        {(imageDim[1] * resizeFactor) / 100} pixels&#93;
         <br />
       </p>
 

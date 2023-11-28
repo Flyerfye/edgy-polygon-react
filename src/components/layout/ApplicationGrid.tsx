@@ -314,13 +314,13 @@ export default function ApplicationGrid() {
         <IntroModal closeAndUploadImgFn={closeIntroAndUploadSourceImg} />
       )}
       {aboutMeModalOpen && <AboutMeModal closeFn={closeAboutMe} />}
-      {saveImageModalOpen && (
+      {saveImageModalOpen && 
         <SaveImageModal
           defaultFilename={saveFileName}
           imageDimFn={getCurrentImageDim}
           closeFn={closeSaveImageModal}
         />
-      )}
+      }
       {(introModalOpen || aboutMeModalOpen) && (
         <Backdrop onClick={emptyFunction} />
       )}

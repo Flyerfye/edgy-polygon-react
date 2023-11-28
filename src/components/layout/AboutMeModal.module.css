@@ -14,3 +14,12 @@
   width: 30rem;
   text-align: center;
 }
+
+.h1 {
+  margin-top: 1vh; /* Adjust the margin to reduce the space after the h1 tag*/
+  margin-bottom: 2vh; /* Adjust the margin to reduce the space after the h1 tag*/
+}
+
+.p {
+  text-align: left;
+}

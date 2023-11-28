@@ -8,12 +8,13 @@ interface AboutMeModalProps {
 export default function AboutMeModal(props: AboutMeModalProps) {
   return (
     <div className={classes.aboutMeModal} data-testid="about-me-modal">
-      <h1>Hello!</h1>
-      <p>
+      <h1 className={classes.h1}>Hello!</h1>
+      <p className={classes.p}>
         I&apos;m{" "}
         <a href="https://www.linkedin.com/in/issabeekun/">Issa Beekun</a>, a
-        software engineer based in Seattle. This app is a project I am using to
-        teach myself about Typescript and React. <br />
+        software engineer based in Seattle. This app is a project I used to
+        learn about Typescript and React while also having fun pursuing my
+        artistic interests. <br />
         <br />I hand-created some{" "}
         <a href="https://twitter.com/goodflyerfye/status/991529959167483904">
           low-poly art

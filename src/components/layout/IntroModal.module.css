@@ -28,21 +28,21 @@
   background-color: darkcyan;
 }
 
-h1 {
+.h1 {
   margin-top: 1vh; /* Adjust the margin to reduce the space after the h1 tag*/
   margin-bottom: 2vh; /* Adjust the margin to reduce the space after the h1 tag*/
 }
 
-h2 {
+.h2 {
   text-align: left;
   margin-bottom: 1vh; /* Adjust the margin to reduce the space after the h2 tag*/
 }
 
-p {
-  text-align: left;
+.p {
+  text-align: center;
 }
 
-ol {
+.ol {
   margin-top: 1vh; /* Adjust the margin to reduce the space before the p tag*/
   text-align: left;
 }
