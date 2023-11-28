@@ -35,7 +35,7 @@ Launches just the unit tests.
 Launches just the e2e tests. E2E tests require the server to be started in test mode (`npm run test:e2eServer`).
 
 To update snapshot images used for validating the ui, either: 
-- Delete the existing snapshots from the 'src\tests\e2e\__image_snapshots__' directory then re-run the command
+- Delete the existing snapshots from the 'src\tests\e2e\\__image_snapshots__' directory then re-run the command
 - Run this command, verify the flagged differences are expected in the generated jest-stare report, and press 'u' in your terminal to re-run the tests while updating the images.
 
 ### `npm run test:e2eServer`
